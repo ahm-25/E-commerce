@@ -31,6 +31,9 @@
     <path v-else-if="name === 'shopping-bag'" d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line v-if="name === 'shopping-bag'" x1="3" y1="6" x2="21" y2="6" /><path v-if="name === 'shopping-bag'" d="M16 10a4 4 0 0 1-8 0" />
     <path v-else-if="name === 'star-half'" d="M12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2V17.77Z" />
     <path v-else-if="name === 'chevron-down'" d="M6 9l6 6 6-6" />
+    <circle v-else-if="name === 'alert-circle'" cx="12" cy="12" r="10" /><line v-if="name === 'alert-circle'" x1="12" y1="8" x2="12" y2="12" /><line v-if="name === 'alert-circle'" x1="12" y1="16" x2="12.01" y2="16" />
+    <path v-else-if="name === 'check-circle'" d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline v-if="name === 'check-circle'" points="22 4 12 14.01 9 11.01" />
+    <circle v-else-if="name === 'info'" cx="12" cy="12" r="10" /><line v-if="name === 'info'" x1="12" y1="16" x2="12" y2="12" /><line v-if="name === 'info'" x1="12" y1="8" x2="12.01" y2="8" />
   </svg>
 </template>
 

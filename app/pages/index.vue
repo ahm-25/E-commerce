@@ -97,31 +97,6 @@
         v-bind="storeData.promoBanners[1]"
       />
     </section>
-      <div class="section-header">
-        <h2 class="text-h2 font-semibold">Best Sellers</h2>
-        <NuxtLink v-if="!isLoading" to="/products?sort=bestsellers" class="view-all-link">View All</NuxtLink>
-      </div>
-      <div class="product-grid">
-        <template v-if="isLoading">
-          <StoreProductCard v-for="i in 4" :key="i" :id="i" loading />
-        </template>
-        <template v-else>
-          <StoreProductCard
-            v-for="product in storeData.bestSellers"
-            :key="product.id"
-            v-bind="product"
-          />
-        </template>
-      </div>
-    </section>
-
-    <!-- Secondary Promotional Banner (Reverse Layout) -->
-      <StorePromoBanner 
-        :loading="isLoading"
-        reverse
-        v-bind="storeData.promoBanners[1]"
-      />
-    </section>
 
     <!-- Customer Reviews Section -->
     <section class="container section-padding bg-secondary-section">

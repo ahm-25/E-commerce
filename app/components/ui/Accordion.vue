@@ -25,9 +25,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
-defineProps({
+const props = defineProps({
   title: { type: String, required: true },
   defaultOpen: { type: Boolean, default: false }
 })
@@ -35,8 +35,6 @@ defineProps({
 const isOpen = ref(false)
 
 // Use mounted hook to respect defaultOpen without causing hydration mismatch if rendered dynamically
-import { onMounted } from 'vue'
-const props = defineProps(['defaultOpen'])
 onMounted(() => {
   if (props.defaultOpen) isOpen.value = true
 })
