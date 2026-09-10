@@ -20,7 +20,7 @@
         <div class="category-card__overlay"></div>
       </div>
       <div class="category-card__content">
-        <h3 class="category-card__title font-semibold">{{ category.name }}</h3>
+        <h3 class="category-card__title text-h4 uppercase tracking-widest font-medium">{{ category.name }}</h3>
       </div>
     </NuxtLink>
   </div>
@@ -42,25 +42,30 @@ defineProps({
 <style scoped>
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: var(--space-4);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
+  .category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
   .category-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-6);
+    gap: var(--space-8);
   }
 }
 
 .category-card {
   position: relative;
   display: block;
-  border-radius: var(--radius-lg);
   overflow: hidden;
-  aspect-ratio: 1;
+  aspect-ratio: 3/4; /* Editorial portrait aspect ratio */
   background-color: var(--bg-tertiary);
-  group: true;
 }
 
 .category-card--loading {
@@ -78,23 +83,24 @@ defineProps({
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.7s ease;
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .category-card:hover .category-card__image {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .category-card__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 50%);
-  opacity: 0.8;
-  transition: opacity 0.3s;
+  background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 40%);
+  opacity: 0.9;
+  transition: opacity 0.5s;
 }
 
 .category-card:hover .category-card__overlay {
   opacity: 1;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%);
 }
 
 .category-card__content {
@@ -102,14 +108,17 @@ defineProps({
   bottom: 0;
   left: 0;
   right: 0;
-  padding: var(--space-4);
+  padding: var(--space-8) var(--space-6);
   z-index: 10;
   text-align: center;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.category-card:hover .category-card__content {
+  transform: translateY(-8px);
 }
 
 .category-card__title {
-  color: #ffffff; /* Always white regardless of theme due to image overlay */
-  font-size: 1.125rem;
-  letter-spacing: 0.02em;
+  color: #ffffff; /* Always white due to image overlay */
 }
 </style>

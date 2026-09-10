@@ -19,10 +19,10 @@
       </div>
       <div class="promo-banner__content-col">
         <div class="promo-banner__content">
-          <span v-if="subtitle" class="text-accent text-sm font-semibold uppercase tracking-wider mb-2 block">{{ subtitle }}</span>
-          <h2 class="text-h2 mb-4">{{ title }}</h2>
-          <p class="text-secondary text-body mb-8">{{ description }}</p>
-          <UiButton variant="primary" size="lg">{{ ctaText }}</UiButton>
+          <span v-if="subtitle" class="text-xs font-medium uppercase tracking-widest mb-4 block text-secondary">{{ subtitle }}</span>
+          <h2 class="text-h2 font-light mb-6">{{ title }}</h2>
+          <p class="text-secondary text-body-lg mb-12 max-w-md">{{ description }}</p>
+          <NuxtLink to="/products" class="editorial-btn">{{ ctaText }}</NuxtLink>
         </div>
       </div>
     </div>
@@ -43,9 +43,8 @@ defineProps({
 
 <style scoped>
 .promo-banner {
-  background-color: var(--bg-tertiary);
-  border-radius: var(--radius-lg);
   overflow: hidden;
+  margin-block: var(--space-8);
 }
 
 .promo-banner__grid {
@@ -53,9 +52,10 @@ defineProps({
   grid-template-columns: 1fr;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .promo-banner__grid {
     grid-template-columns: 1fr 1fr;
+    min-height: 600px;
   }
 }
 
@@ -69,7 +69,7 @@ defineProps({
 
 .promo-banner__image-col {
   position: relative;
-  min-height: 300px;
+  min-height: 400px;
 }
 
 .promo-banner__image {
@@ -81,20 +81,16 @@ defineProps({
 }
 
 .promo-banner__image-skeleton {
-  min-height: 300px;
+  min-height: 400px;
   height: 100%;
 }
 
 .promo-banner__content-col {
   display: flex;
   align-items: center;
-  padding: var(--space-8);
-}
-
-@media (min-width: 768px) {
-  .promo-banner__content-col {
-    padding: var(--space-12);
-  }
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  background-color: var(--bg-secondary);
 }
 
 @media (min-width: 1024px) {
@@ -103,8 +99,34 @@ defineProps({
   }
 }
 
-.tracking-wider {
-  letter-spacing: 0.05em;
+.promo-banner__content {
+  max-width: 500px;
+  text-align: center;
+}
+
+.max-w-md {
+  max-width: 28rem;
+  margin-inline: auto;
+}
+
+.editorial-btn {
+  display: inline-block;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--text-primary);
+  color: var(--text-primary);
+  padding: 0 0 var(--space-2) 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: opacity 0.3s ease, padding-bottom 0.3s ease;
+}
+
+.editorial-btn:hover {
+  opacity: 0.7;
+  padding-bottom: var(--space-3);
 }
 
 .block {

@@ -1,7 +1,10 @@
 <template>
   <div class="homepage">
-    <!-- Hero Section -->
-    <section class="container">
+    <!-- 1. Infinite Marquee -->
+    <StoreMarquee />
+
+    <!-- 2. Editorial Hero -->
+    <section class="hero-section">
       <StoreHeroBanner
         :loading="isLoading"
         :title="storeData.hero.title"
@@ -12,40 +15,22 @@
       />
     </section>
 
-    <!-- Categories Section -->
-    <section class="container section-padding">
-      <div class="section-header">
-        <h2 class="text-h2 font-semibold">Shop by Category</h2>
-        <NuxtLink v-if="!isLoading" to="/categories" class="view-all-link">View All</NuxtLink>
-      </div>
-      <StoreCategoryGrid :loading="isLoading" :categories="storeData.categories" />
+    <!-- 3. Featured Collection (Asymmetrical) -->
+    <section class="container section-padding reveal-on-scroll">
+      <StoreFeaturedCollection 
+        :loading="isLoading"
+        title="Curated Selection"
+        link-text="Shop Collection"
+        link-url="/products"
+        :products="storeData.featuredProducts.slice(0, 3)"
+      />
     </section>
 
-    <!-- Featured Products Section -->
-    <section class="container section-padding bg-secondary-section">
+    <!-- 4. Product Collection (New Arrivals) -->
+    <section class="container section-padding reveal-on-scroll">
       <div class="section-header">
-        <h2 class="text-h2 font-semibold">Featured Products</h2>
-        <NuxtLink v-if="!isLoading" to="/products?sort=featured" class="view-all-link">View All</NuxtLink>
-      </div>
-      <div class="product-grid">
-        <template v-if="isLoading">
-          <StoreProductCard v-for="i in 4" :key="i" :id="i" loading />
-        </template>
-        <template v-else>
-          <StoreProductCard
-            v-for="product in storeData.featuredProducts"
-            :key="product.id"
-            v-bind="product"
-          />
-        </template>
-      </div>
-    </section>
-
-    <!-- New Arrivals Section -->
-    <section class="container section-padding">
-      <div class="section-header">
-        <h2 class="text-h2 font-semibold">New Arrivals</h2>
-        <NuxtLink v-if="!isLoading" to="/products?sort=newest" class="view-all-link">View All</NuxtLink>
+        <h2 class="text-h3 font-medium uppercase tracking-wide">New Arrivals</h2>
+        <NuxtLink v-if="!isLoading" to="/products?sort=newest" class="editorial-link">View All</NuxtLink>
       </div>
       <div class="product-grid">
         <template v-if="isLoading">
@@ -61,49 +46,41 @@
       </div>
     </section>
 
-    <!-- Primary Promotional Banner -->
-    <section class="container section-padding">
+    <!-- 5. Brand Statement -->
+    <StoreBrandStatement />
+
+    <!-- 6. Categories (Photographic) -->
+    <section class="container section-padding reveal-on-scroll">
+      <div class="section-header">
+        <h2 class="text-h3 font-medium uppercase tracking-wide">Collections</h2>
+      </div>
+      <StoreCategoryGrid :loading="isLoading" :categories="storeData.categories" />
+    </section>
+
+    <!-- 7. Featured Product (Cinematic) -->
+    <div class="reveal-on-scroll">
+      <StoreFeaturedProduct :loading="isLoading" :product="storeData.featuredPiece" />
+    </div>
+
+    <!-- 8. Best Sellers (Carousel) -->
+    <section class="container section-padding reveal-on-scroll">
+      <StoreProductCarousel :loading="isLoading" title="Best Sellers" :products="storeData.bestSellers" />
+    </section>
+
+    <!-- 9. Promotional Section -->
+    <section class="container reveal-on-scroll">
       <StorePromoBanner 
         :loading="isLoading"
         v-bind="storeData.promoBanners[0]"
       />
     </section>
 
-    <!-- Best Sellers Section -->
-    <section class="container section-padding bg-secondary-section">
-      <div class="section-header">
-        <h2 class="text-h2 font-semibold">Best Sellers</h2>
-        <NuxtLink v-if="!isLoading" to="/products?sort=bestsellers" class="view-all-link">View All</NuxtLink>
+    <!-- 10. Customer Reviews -->
+    <section class="container section-padding py-24 reveal-on-scroll">
+      <div class="section-header text-center w-full justify-center border-none mb-12">
+        <h2 class="text-h3 font-medium uppercase tracking-wide mx-auto">Client Testimonials</h2>
       </div>
-      <div class="product-grid">
-        <template v-if="isLoading">
-          <StoreProductCard v-for="i in 4" :key="i" :id="i" loading />
-        </template>
-        <template v-else>
-          <StoreProductCard
-            v-for="product in storeData.bestSellers"
-            :key="product.id"
-            v-bind="product"
-          />
-        </template>
-      </div>
-    </section>
-
-    <!-- Product Collection Section -->
-    <section class="container section-padding">
-      <StorePromoBanner 
-        :loading="isLoading"
-        reverse
-        v-bind="storeData.promoBanners[1]"
-      />
-    </section>
-
-    <!-- Customer Reviews Section -->
-    <section class="container section-padding bg-secondary-section">
-      <div class="section-header justify-center text-center w-full">
-        <h2 class="text-h2 font-semibold mx-auto">What Our Customers Say</h2>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <template v-if="isLoading">
           <StoreCustomerReviewCard v-for="i in 3" :key="i" loading />
         </template>
@@ -116,35 +93,21 @@
         </template>
       </div>
     </section>
-    
-    <!-- Newsletter Section (Pre-footer) -->
-    <section class="container section-padding">
-      <div class="newsletter-cta">
-        <div class="newsletter-cta__content">
-          <h2 class="text-h2 font-semibold mb-4">Join Our Community</h2>
-          <p class="text-body text-secondary mb-8">Sign up for exclusive offers, original stories, events and more.</p>
-          <form class="newsletter-cta__form" @submit.prevent>
-            <UiInput placeholder="Enter your email address" type="email" required />
-            <UiButton variant="primary" size="lg">Subscribe</UiButton>
-          </form>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { definePageMeta } from '#imports'
+import { useScrollReveal } from '~/composables/useScrollReveal'
 
 definePageMeta({
   layout: 'store'
 })
 
-// Simulated loading state for dynamic tenant content
 const isLoading = ref(true)
+const { registerElement } = useScrollReveal()
 
-// Centralized mock data payload (Simulating an API response from the tenant's backend)
 const storeData = ref({
   hero: {} as any,
   categories: [] as any[],
@@ -152,11 +115,11 @@ const storeData = ref({
   newArrivals: [] as any[],
   bestSellers: [] as any[],
   promoBanners: [] as any[],
-  reviews: [] as any[]
+  reviews: [] as any[],
+  featuredPiece: {} as any
 })
 
 onMounted(() => {
-  // Simulate network latency (1.5 seconds) to demonstrate loading skeletons
   setTimeout(() => {
     storeData.value = {
       hero: {
@@ -188,7 +151,8 @@ onMounted(() => {
         { id: 201, title: 'Oxford Button-Down Shirt', category: 'Essentials', price: 55.00, image: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e23?q=80&w=800&auto=format&fit=crop', badge: 'Bestseller', badgeVariant: 'warning', rating: 4.9, reviewCount: 156 },
         { id: 202, title: 'Slim Fit Chinos', category: 'Trousers', price: 75.00, originalPrice: 90.00, image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=800&auto=format&fit=crop', rating: 4.7, reviewCount: 89 },
         { id: 203, title: 'Polarized Sunglasses', category: 'Accessories', price: 120.00, image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=800&auto=format&fit=crop', rating: 4.6, reviewCount: 34 },
-        { id: 204, title: 'Canvas Tote Bag', category: 'Accessories', price: 35.00, image: 'https://images.unsplash.com/photo-1597633244018-87cb463c6d2c?q=80&w=800&auto=format&fit=crop', rating: 4.8, reviewCount: 112 }
+        { id: 204, title: 'Canvas Tote Bag', category: 'Accessories', price: 35.00, image: 'https://images.unsplash.com/photo-1597633244018-87cb463c6d2c?q=80&w=800&auto=format&fit=crop', rating: 4.8, reviewCount: 112 },
+        { id: 205, title: 'Linen T-Shirt', category: 'Essentials', price: 40.00, image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop', rating: 4.5, reviewCount: 56 }
       ],
       promoBanners: [
         {
@@ -197,93 +161,77 @@ onMounted(() => {
           description: "Lightweight fabrics and breathable silhouettes designed for the warmest months of the year.",
           ctaText: "Explore Collection",
           image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1200&auto=format&fit=crop"
-        },
-        {
-          title: "Sustainable Practices",
-          subtitle: "Our Commitment",
-          description: "We partner with ethical factories and use organic materials to reduce our environmental footprint without compromising on quality.",
-          ctaText: "Read Our Story",
-          image: "https://images.unsplash.com/photo-1612423284934-2850a4ea6b0f?q=80&w=1200&auto=format&fit=crop"
         }
       ],
       reviews: [
         { name: "Sarah Jenkins", date: "May 12, 2026", title: "Exceptional quality", text: "I've ordered three times from this store and the quality is consistently amazing. The wool coat fits perfectly.", rating: 5 },
         { name: "Michael Chen", date: "April 28, 2026", title: "Great customer service", text: "Had an issue with sizing and the return process was incredibly smooth. Will definitely be shopping here again.", rating: 5 },
         { name: "Emma Robertson", date: "April 15, 2026", title: "Beautiful packaging", text: "Opening the package felt like receiving a gift. The attention to detail is what sets this brand apart.", rating: 4 }
-      ]
+      ],
+      featuredPiece: {
+        id: 999,
+        title: 'The Signature Wool Overcoat',
+        description: 'Meticulously tailored from 100% Italian virgin wool. Features a classic double-breasted silhouette with horn buttons and a cupro lining for an impeccable drape.',
+        price: 495.00,
+        image: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?q=80&w=1200&auto=format&fit=crop'
+      }
     }
     
     isLoading.value = false
+
+    // Register all elements with the 'reveal-on-scroll' class after DOM updates
+    nextTick(() => {
+      document.querySelectorAll('.reveal-on-scroll').forEach(registerElement)
+    })
   }, 1500)
 })
+
 </script>
 
 <style scoped>
+.hero-section {
+  width: 100%;
+}
+
 .section-padding {
-  padding-block: var(--space-16);
+  padding-block: var(--space-24);
 }
 
 .section-header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-8);
-  border-bottom: 1px solid var(--border-light);
-  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-12);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--space-6);
 }
 
-.view-all-link {
+.section-header h2 {
+  margin: 0;
+  line-height: 1;
+}
+
+.border-none {
+  border-bottom: none;
+}
+
+.editorial-link {
+  font-size: 0.875rem;
   font-weight: 500;
-  color: var(--accent-color);
-  transition: color 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease, opacity 0.3s ease;
+  padding-bottom: 2px;
 }
 
-.view-all-link:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
+.editorial-link:hover {
+  border-color: var(--text-primary);
+  opacity: 0.8;
 }
 
-/* Optional full-width background for sections */
-.bg-secondary-section {
-  position: relative;
-}
-.bg-secondary-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  width: 100vw;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--bg-secondary);
-  z-index: -1;
-}
-
-.newsletter-cta {
-  background-color: var(--bg-tertiary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-12) var(--space-4);
-  text-align: center;
-}
-
-.newsletter-cta__content {
-  max-width: 600px;
-  margin-inline: auto;
-}
-
-.newsletter-cta__form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-@media (min-width: 640px) {
-  .newsletter-cta__form {
-    flex-direction: row;
-    align-items: stretch;
-  }
-  
-  .newsletter-cta__form > :first-child {
-    flex: 1;
-  }
+.py-24 {
+  padding-block: var(--space-24);
 }
 </style>

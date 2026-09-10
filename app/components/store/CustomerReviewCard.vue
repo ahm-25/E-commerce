@@ -1,60 +1,33 @@
 <template>
   <div v-if="loading" class="review-card p-6">
-    <div class="flex items-center gap-4 mb-4">
-      <UiSkeleton type="circle" width="3rem" height="3rem" />
-      <div>
-        <UiSkeleton type="text" width="100px" />
-        <UiSkeleton type="text" width="60px" />
-      </div>
-    </div>
-    <UiSkeleton type="text" width="100%" />
-    <UiSkeleton type="text" width="90%" />
-    <UiSkeleton type="text" width="80%" />
+    <UiSkeleton type="text" width="100%" class="mb-2" />
+    <UiSkeleton type="text" width="90%" class="mb-2" />
+    <UiSkeleton type="text" width="60%" class="mb-8" />
+    <UiSkeleton type="text" width="40%" />
   </div>
 
   <div v-else class="review-card p-6">
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex gap-1">
-        <UiIcon v-for="i in 5" :key="i" name="star" :size="16" :color="i <= rating ? 'var(--color-warning)' : 'var(--border-color)'" :filled="i <= rating" />
-      </div>
-      <span class="text-sm text-muted">{{ date }}</span>
+    <div class="flex items-center gap-1 mb-6">
+      <UiIcon v-for="i in 5" :key="i" name="star" :size="14" :color="i <= rating ? 'var(--text-primary)' : 'var(--border-color)'" :filled="true" />
     </div>
-    <h4 class="font-semibold mb-2">{{ title }}</h4>
-    <p class="text-secondary text-sm mb-6 flex-grow">{{ text }}</p>
-    <div class="flex items-center gap-3 mt-auto pt-4 border-t border-light">
-      <div class="avatar">
-        {{ initials }}
-      </div>
-      <div>
-        <p class="font-medium text-sm">{{ name }}</p>
-        <p class="text-xs text-muted flex items-center gap-1">
-          <UiIcon name="check-circle" :size="12" color="var(--color-success)" />
-          Verified Buyer
-        </p>
-      </div>
+    
+    <p class="review-text text-h4 font-light mb-8 flex-grow">"{{ text }}"</p>
+    
+    <div class="review-author">
+      <p class="text-sm font-medium uppercase tracking-widest">{{ name }}</p>
+      <p class="text-xs text-muted mt-1">{{ date }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
-const props = defineProps({
+defineProps({
   name: { type: String, default: '' },
   date: { type: String, default: '' },
-  title: { type: String, default: '' },
+  title: { type: String, default: '' }, // Not used in minimal layout
   text: { type: String, default: '' },
   rating: { type: Number, default: 5 },
   loading: { type: Boolean, default: false }
-})
-
-const initials = computed(() => {
-  if (!props.name) return ''
-  const parts = props.name.split(' ')
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-  }
-  return props.name.substring(0, 2).toUpperCase()
 })
 </script>
 
@@ -62,35 +35,29 @@ const initials = computed(() => {
 .review-card {
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
   height: 100%;
+  text-align: center;
+  align-items: center;
 }
 
 .p-6 {
-  padding: var(--space-6);
+  padding: var(--space-8) var(--space-6);
 }
 
-.border-t {
-  border-top: 1px solid var(--border-color);
-}
-
-.border-light {
-  border-color: var(--border-light);
-}
-
-.avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  background-color: var(--bg-secondary);
+.review-text {
   color: var(--text-primary);
-  border-radius: 50%;
-  font-weight: 600;
-  font-size: 0.875rem;
-  letter-spacing: 0.05em;
+  line-height: 1.6;
+}
+
+.review-author {
+  margin-top: auto;
+  border-top: 1px solid var(--text-primary);
+  padding-top: var(--space-4);
+  width: 3rem; /* Small separator line effect */
+  transition: width 0.3s ease;
+}
+
+.review-card:hover .review-author {
+  width: 5rem;
 }
 </style>

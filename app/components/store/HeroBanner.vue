@@ -1,144 +1,196 @@
 <template>
-  <div v-if="loading" class="hero-banner">
-    <UiSkeleton type="rect" width="100%" height="100%" class="hero-banner__skeleton-bg" />
-    <div class="container hero-banner__content">
-      <div class="hero-banner__text-box">
-        <UiSkeleton type="text" width="100px" class="mb-4" />
-        <UiSkeleton type="text" width="80%" height="3rem" class="mb-4" />
-        <UiSkeleton type="text" width="90%" class="mb-2" />
-        <UiSkeleton type="text" width="70%" class="mb-8" />
-        <UiSkeleton type="rect" width="160px" height="3.5rem" />
-      </div>
-    </div>
-  </div>
-
-  <div v-else class="hero-banner">
-    <div class="hero-banner__bg">
-      <img v-if="backgroundImage" :src="backgroundImage" :alt="title" class="hero-banner__image">
-      <div class="hero-banner__overlay"></div>
-    </div>
+  <div class="hero-banner">
+    <!-- Background Video -->
+    <video 
+      autoplay 
+      loop 
+      muted 
+      playsinline 
+      class="hero-video"
+      poster="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2000&auto=format&fit=crop"
+    >
+      <!-- We use a placeholder video from a public source for the demo -->
+      <source src="https://cdn.pixabay.com/video/2016/11/21/20/49/6451-192534563_large.mp4" type="video/mp4">
+    </video>
     
-    <div class="container hero-banner__content">
-      <div class="hero-banner__text-box">
-        <span v-if="subtitle" class="hero-banner__subtitle font-semibold">{{ subtitle }}</span>
-        <h2 class="hero-banner__title text-h1">{{ title }}</h2>
-        <p v-if="description" class="hero-banner__description text-body">{{ description }}</p>
-        <div class="hero-banner__actions mt-8">
-          <UiButton variant="primary" size="lg" @click="$emit('cta-click')">{{ ctaText }}</UiButton>
-        </div>
+    <!-- Subtle Overlay -->
+    <div class="hero-overlay"></div>
+
+    <!-- Content -->
+    <div class="hero-content container">
+      <div class="hero-text-block" ref="heroText">
+        <span class="hero-subtitle text-xs uppercase tracking-widest">{{ subtitle }}</span>
+        <h1 class="hero-title text-hero">{{ title }}</h1>
+        <NuxtLink v-if="ctaUrl" :to="ctaUrl" class="hero-cta">{{ ctaText }}</NuxtLink>
       </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator hidden md:flex">
+      <span class="scroll-text text-xs uppercase tracking-widest">Scroll</span>
+      <div class="scroll-line"></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
+
 defineProps({
-  title: { type: String, default: '' },
-  subtitle: { type: String, default: '' },
-  description: { type: String, default: '' },
-  ctaText: { type: String, default: 'Shop Now' },
-  backgroundImage: { type: String, default: '' },
-  loading: { type: Boolean, default: false }
+  title: { type: String, default: 'The Fall Collection' },
+  subtitle: { type: String, default: 'New Arrivals' },
+  ctaText: { type: String, default: 'Explore Now' },
+  ctaUrl: { type: String, default: '/products' }
 })
 
-defineEmits(['cta-click'])
+const heroText = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  // Simple fade-up animation on load
+  setTimeout(() => {
+    if (heroText.value) {
+      heroText.value.classList.add('is-visible')
+    }
+  }, 100)
+})
 </script>
 
 <style scoped>
 .hero-banner {
   position: relative;
-  min-height: 60vh;
+  width: 100%;
+  height: 90vh; /* Extremely tall, immersive hero */
+  min-height: 600px;
+  overflow: hidden;
+  background-color: var(--bg-primary);
   display: flex;
   align-items: center;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  margin-block: var(--space-6);
-  background-color: var(--bg-secondary);
 }
 
-.hero-banner__skeleton-bg {
+@media (min-width: 1024px) {
+  .hero-banner {
+    height: 100vh;
+  }
+}
+
+.hero-video {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
   z-index: 0;
 }
 
-.hero-banner__bg {
+.hero-overlay {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+  z-index: 1;
 }
 
-.hero-banner__image {
+.hero-content {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: flex-start; /* Align left */
 }
 
-.hero-banner__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, var(--bg-primary) 10%, rgba(255,255,255,0) 100%);
+.hero-text-block {
+  max-width: 800px;
+  color: #ffffff; /* Always white on dark video */
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-[data-theme="dark"] .hero-banner__overlay {
-  background: linear-gradient(to right, var(--bg-primary) 10%, rgba(15,23,42,0) 100%);
+.hero-text-block.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-[dir="rtl"] .hero-banner__overlay {
-  background: linear-gradient(to left, var(--bg-primary) 10%, rgba(255,255,255,0) 100%);
+.hero-subtitle {
+  display: block;
+  margin-bottom: var(--space-6);
+  opacity: 0.8;
 }
 
-[data-theme="dark"][dir="rtl"] .hero-banner__overlay {
-  background: linear-gradient(to left, var(--bg-primary) 10%, rgba(15,23,42,0) 100%);
+.hero-title {
+  margin-bottom: var(--space-8);
+  font-weight: 300;
+  line-height: 1.1;
 }
 
-.hero-banner__content {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-}
-
-.hero-banner__text-box {
-  max-width: 500px;
-  padding: var(--space-8) 0;
-}
-
-.hero-banner__subtitle {
+.hero-cta {
   display: inline-block;
-  color: var(--accent-color);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: var(--space-4);
+  color: #ffffff;
   font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ffffff;
+  text-decoration: none;
+  transition: opacity 0.3s ease, padding-bottom 0.3s ease;
 }
 
-.hero-banner__title {
-  color: var(--text-primary);
-  margin-bottom: var(--space-4);
+.hero-cta:hover {
+  opacity: 0.7;
+  padding-bottom: 8px;
 }
 
-.hero-banner__description {
-  color: var(--text-secondary);
-  font-size: 1.125rem;
+/* Scroll Indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: var(--space-12);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: #ffffff;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  opacity: 0;
+  animation: fadeIn 2s forwards 1s; /* Fade in after text */
 }
 
-@media (max-width: 768px) {
-  .hero-banner {
-    min-height: 50vh;
-  }
-  
-  .hero-banner__overlay {
-    background: linear-gradient(to top, var(--bg-primary) 0%, rgba(255,255,255,0.4) 100%);
-  }
-  
-  [data-theme="dark"] .hero-banner__overlay {
-    background: linear-gradient(to top, var(--bg-primary) 0%, rgba(15,23,42,0.4) 100%);
-  }
-  
-  .hero-banner__text-box {
-    padding-top: var(--space-16);
-    text-align: center;
-    margin-inline: auto;
-  }
+.scroll-line {
+  width: 1px;
+  height: 60px;
+  background-color: rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background-color: #ffffff;
+  animation: scrollDown 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+@keyframes scrollDown {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+@keyframes fadeIn {
+  to { opacity: 0.8; }
+}
+
+/* Hide on mobile for cleaner look */
+@media (max-width: 767px) {
+  .hidden { display: none !important; }
 }
 </style>

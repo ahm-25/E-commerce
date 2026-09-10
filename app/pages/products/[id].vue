@@ -1,7 +1,7 @@
 <template>
-  <div class="product-details-page section-padding">
+  <div class="product-details-page">
     <!-- Top Section: Gallery & Info -->
-    <section class="container">
+    <section class="container px-0 md:px-8">
       <div class="pdp-grid">
         
         <!-- Left Column: Gallery -->
@@ -10,46 +10,40 @@
         </div>
 
         <!-- Right Column: Info & Actions -->
-        <div class="pdp-info-col">
+        <div class="pdp-info-col px-4 md:px-0">
           <div v-if="isLoading" class="pdp-info-skeleton">
             <UiSkeleton type="text" width="20%" class="mb-2" />
-            <UiSkeleton type="text" width="80%" height="2.5rem" class="mb-4" />
-            <UiSkeleton type="rect" width="150px" height="1.5rem" class="mb-6" />
-            <UiSkeleton type="rect" width="120px" height="2rem" class="mb-6" />
+            <UiSkeleton type="text" width="80%" height="3rem" class="mb-6" />
+            <UiSkeleton type="rect" width="150px" height="2rem" class="mb-8" />
             <UiSkeleton type="text" width="100%" class="mb-2" />
-            <UiSkeleton type="text" width="90%" class="mb-8" />
-            <UiSkeleton type="rect" width="100%" height="150px" class="mb-8" />
-            <div class="flex gap-4">
-              <UiSkeleton type="rect" width="150px" height="3rem" />
-              <UiSkeleton type="rect" width="100%" height="3rem" />
-            </div>
+            <UiSkeleton type="text" width="90%" class="mb-12" />
+            <UiSkeleton type="rect" width="100%" height="80px" class="mb-8" />
+            <UiSkeleton type="rect" width="100%" height="3.5rem" class="mb-4" />
           </div>
 
-          <div v-else>
+          <div v-else class="pdp-info-content">
             <!-- Breadcrumbs / Category -->
-            <p class="text-sm text-accent font-medium mb-2 uppercase tracking-wider">{{ productData.category }}</p>
+            <p class="text-xs text-secondary font-medium mb-4 uppercase tracking-widest">{{ productData.category }}</p>
             
             <!-- Title -->
-            <h1 class="text-h2 mb-4">{{ productData.title }}</h1>
+            <h1 class="text-h1 font-light mb-6 leading-tight">{{ productData.title }}</h1>
             
-            <!-- Rating -->
-            <div class="flex items-center gap-2 mb-6">
-              <div class="flex">
-                <UiIcon v-for="i in 5" :key="i" name="star" :size="16" :color="i <= productData.rating ? 'var(--color-warning)' : 'var(--border-color)'" :filled="i <= productData.rating" />
+            <!-- Price & Rating -->
+            <div class="flex items-end justify-between mb-8 pb-8 border-b border-color">
+              <div class="flex items-center gap-4">
+                <span class="text-h2 font-medium">{{ formattedPrice }}</span>
+                <span v-if="productData.originalPrice" class="text-secondary text-lg line-through">{{ formattedOriginalPrice }}</span>
               </div>
-              <span class="text-sm font-medium">{{ productData.rating }}</span>
-              <span class="text-sm text-muted underline cursor-pointer">({{ productData.reviewCount }} reviews)</span>
-            </div>
-            
-            <!-- Price -->
-            <div class="flex items-center gap-3 mb-6">
-              <span class="text-h3 font-semibold" :class="{'text-danger': discountPercentage > 0}">{{ formattedPrice }}</span>
-              <span v-if="productData.originalPrice" class="text-muted text-lg line-through">{{ formattedOriginalPrice }}</span>
-              <UiBadge v-if="discountPercentage > 0" variant="danger">-{{ discountPercentage }}%</UiBadge>
+              <div class="flex items-center gap-2">
+                <div class="flex">
+                  <UiIcon v-for="i in 5" :key="i" name="star" :size="14" :color="i <= productData.rating ? 'var(--text-primary)' : 'var(--border-color)'" :filled="true" />
+                </div>
+                <span class="text-xs text-muted uppercase tracking-widest cursor-pointer hover:text-primary transition-colors">({{ productData.reviewCount }})</span>
+              </div>
             </div>
             
             <!-- Short Description -->
-            <p class="text-body text-secondary mb-8 leading-relaxed">
+            <p class="text-body-lg text-secondary mb-12">
               {{ productData.shortDescription }}
             </p>
             
@@ -59,30 +53,34 @@
             </div>
             
             <!-- Actions -->
-            <div class="pdp-actions mb-8">
+            <div class="pdp-actions mb-12">
               <div class="pdp-quantity">
-                <span class="text-sm font-medium mb-2 block">Quantity</span>
-                <UiQuantitySelector v-model="quantity" :max="10" />
+                <span class="text-xs uppercase tracking-widest font-medium mb-3 block">Quantity</span>
+                <div class="quantity-selector">
+                  <button @click="quantity > 1 ? quantity-- : null" class="qty-btn">-</button>
+                  <span class="qty-val">{{ quantity }}</span>
+                  <button @click="quantity < 10 ? quantity++ : null" class="qty-btn">+</button>
+                </div>
               </div>
               
               <div class="pdp-buttons">
-                <div class="flex gap-3 mb-3">
-                  <UiButton variant="outline" size="lg" class="flex-1" @click="addToCart">Add to Cart</UiButton>
-                  <button class="wishlist-btn-large" :class="{'wishlist-btn-large--active': isWishlisted}" @click="toggleWishlist">
-                    <UiIcon name="heart" :size="24" :filled="isWishlisted" />
+                <button class="editorial-btn-primary mb-4" @click="handleAddToCart">Add to Cart</button>
+                <div class="flex gap-4">
+                  <button class="editorial-btn-outline flex-1" @click="buyNow">Buy It Now</button>
+                  <button class="wishlist-btn" :class="{'wishlist-btn--active': isWishlisted}" @click="toggleWishlist" aria-label="Add to Wishlist">
+                    <UiIcon name="heart" :size="20" stroke-width="1.5" :filled="isWishlisted" />
                   </button>
                 </div>
-                <UiButton variant="primary" size="lg" full-width @click="buyNow">Buy It Now</UiButton>
               </div>
             </div>
             
             <!-- Trust Badges -->
-            <div class="flex items-center gap-6 py-4 border-y border-light">
-              <div class="flex items-center gap-2 text-sm text-secondary">
-                <UiIcon name="check-circle" :size="18" /> Secure Checkout
+            <div class="flex flex-col gap-3 py-6 border-t border-color text-sm text-secondary uppercase tracking-widest">
+              <div class="flex items-center gap-3">
+                <UiIcon name="check" :size="16" /> Complimentary Worldwide Shipping
               </div>
-              <div class="flex items-center gap-2 text-sm text-secondary">
-                <UiIcon name="truck" :size="18" /> Free Shipping over $100
+              <div class="flex items-center gap-3">
+                <UiIcon name="refresh-cw" :size="16" /> 30-Day Returns
               </div>
             </div>
           </div>
@@ -90,19 +88,45 @@
       </div>
     </section>
 
-    <!-- Middle Section: Accordions -->
-    <section class="container section-padding pb-0">
-      <div class="max-w-3xl mx-auto">
-        <template v-if="isLoading">
-          <UiSkeleton v-for="i in 4" :key="i" type="rect" height="4rem" class="mb-4" />
-        </template>
-        <template v-else>
-          <UiAccordion title="Product Description" default-open>
+    <!-- Details Section (Desktop Editorial / Mobile Accordion) -->
+    <section class="container section-padding border-t border-color mt-16 md:mt-24">
+      <div v-if="!isLoading" class="max-w-4xl mx-auto">
+        <!-- Desktop: Large open sections -->
+        <div class="hidden md:flex flex-col gap-24">
+          <div class="editorial-section">
+            <h2 class="text-h3 uppercase tracking-wide mb-8">The Story</h2>
+            <p class="text-body-lg text-secondary max-w-2xl">{{ productData.description }}</p>
+            <p class="text-body-lg text-secondary max-w-2xl mt-4">Crafted with meticulous attention to detail, this piece represents the pinnacle of our design philosophy, merging timeless aesthetics with modern functionality.</p>
+          </div>
+          
+          <div class="editorial-section">
+            <h2 class="text-h3 uppercase tracking-wide mb-8">Specifications</h2>
+            <ul class="spec-list text-body-lg text-secondary max-w-2xl">
+              <li><span class="font-medium text-primary uppercase tracking-wider text-sm mr-4">Material</span> {{ productData.specs.material }}</li>
+              <li><span class="font-medium text-primary uppercase tracking-wider text-sm mr-4">Fit</span> {{ productData.specs.fit }}</li>
+              <li><span class="font-medium text-primary uppercase tracking-wider text-sm mr-4">Care</span> {{ productData.specs.care }}</li>
+              <li><span class="font-medium text-primary uppercase tracking-wider text-sm mr-4">Origin</span> {{ productData.specs.origin }}</li>
+            </ul>
+          </div>
+          
+          <div class="editorial-section">
+            <h2 class="text-h3 uppercase tracking-wide mb-8">Shipping & Returns</h2>
+            <div class="text-body-lg text-secondary max-w-2xl">
+              <p class="mb-2"><strong class="font-medium text-primary">Standard Shipping:</strong> 3-5 business days.</p>
+              <p class="mb-6"><strong class="font-medium text-primary">Express Shipping:</strong> 1-2 business days.</p>
+              <p>We accept returns within 30 days of purchase. Items must be in their original condition with tags attached. Please visit our returns portal to initiate a request.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile: Accordions -->
+        <div class="md:hidden">
+          <UiAccordion title="The Story" default-open>
             <p class="mb-4">{{ productData.description }}</p>
             <p>Crafted with meticulous attention to detail, this piece represents the pinnacle of our design philosophy, merging timeless aesthetics with modern functionality.</p>
           </UiAccordion>
           <UiAccordion title="Specifications">
-            <ul class="spec-list">
+            <ul class="flex flex-col gap-2">
               <li><strong>Material:</strong> {{ productData.specs.material }}</li>
               <li><strong>Fit:</strong> {{ productData.specs.fit }}</li>
               <li><strong>Care:</strong> {{ productData.specs.care }}</li>
@@ -114,17 +138,16 @@
             <p class="mb-4"><strong>Express Shipping:</strong> 1-2 business days.</p>
             <p>We accept returns within 30 days of purchase. Items must be in their original condition with tags attached.</p>
           </UiAccordion>
-        </template>
+        </div>
       </div>
     </section>
 
     <!-- Customer Reviews -->
-    <section class="container section-padding">
-      <div class="flex items-center justify-between mb-8 border-b border-light pb-4">
-        <h2 class="text-h2 font-semibold">Customer Reviews</h2>
-        <UiButton v-if="!isLoading" variant="outline">Write a Review</UiButton>
+    <section class="container section-padding bg-secondary py-24">
+      <div class="section-header justify-center text-center w-full border-none mb-12">
+        <h2 class="text-h3 font-medium uppercase tracking-wide mx-auto">Client Testimonials</h2>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <template v-if="isLoading">
           <StoreCustomerReviewCard v-for="i in 3" :key="i" loading />
         </template>
@@ -139,9 +162,9 @@
     </section>
 
     <!-- Related Products -->
-    <section class="container section-padding bg-secondary-section">
-      <div class="flex items-center justify-between mb-8 border-b border-light pb-4">
-        <h2 class="text-h2 font-semibold">You May Also Like</h2>
+    <section class="container section-padding mt-12 mb-24">
+      <div class="section-header">
+        <h2 class="text-h3 font-medium uppercase tracking-wide">Complementary Pieces</h2>
       </div>
       <div class="product-grid">
         <template v-if="isLoading">
@@ -162,14 +185,18 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { definePageMeta } from '#imports'
+import { useCart } from '~/composables/useCart'
 
 definePageMeta({
   layout: 'store'
 })
 
+const { addToCart } = useCart()
+
 const isLoading = ref(true)
 const quantity = ref(1)
 const isWishlisted = ref(false)
+const selectedVariant = ref('')
 
 // Formatting
 const formatPrice = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
@@ -183,9 +210,28 @@ const discountPercentage = computed(() => {
 })
 
 const toggleWishlist = () => { isWishlisted.value = !isWishlisted.value }
-const handleVariantSelection = (selection: any) => { console.log('Selected variants:', selection) }
-const addToCart = () => { alert(`Added ${quantity.value} item(s) to cart!`) }
-const buyNow = () => { alert('Redirecting to checkout...') }
+
+const handleVariantSelection = (selection: any) => { 
+  // Convert selection object to a string representing the variant
+  selectedVariant.value = Object.values(selection).map((opt: any) => opt.label).join(' / ')
+}
+
+const handleAddToCart = () => {
+  addToCart({
+    id: productData.value.id,
+    title: productData.value.title,
+    price: productData.value.price,
+    quantity: quantity.value,
+    image: productData.value.images[0],
+    variant: selectedVariant.value
+  })
+}
+
+const buyNow = () => { 
+  handleAddToCart()
+  // In a real app, this would redirect to checkout immediately
+  // useRouter().push('/checkout')
+}
 
 // Mock Data
 const productData = ref({} as any)
@@ -194,19 +240,19 @@ onMounted(() => {
   setTimeout(() => {
     productData.value = {
       id: 101,
-      title: 'Minimalist Wool Coat',
+      title: 'The Signature Wool Overcoat',
       category: 'Outerwear',
-      price: 299.00,
-      originalPrice: 350.00,
+      price: 495.00,
+      originalPrice: null,
       rating: 4.8,
       reviewCount: 124,
-      shortDescription: 'Elevate your winter wardrobe with our signature Minimalist Wool Coat. Tailored for a relaxed yet refined fit, it features a hidden button placket and deep welt pockets.',
-      description: 'The Minimalist Wool Coat is constructed from a premium Italian wool blend that offers exceptional warmth without the bulk. The interior is fully lined with silky cupro, ensuring smooth layering over heavy knitwear. The silhouette is deliberately oversized to accommodate modern styling while maintaining clean, architectural lines.',
+      shortDescription: 'Meticulously tailored from 100% Italian virgin wool. Features a classic double-breasted silhouette with horn buttons and a cupro lining for an impeccable drape.',
+      description: 'The Signature Wool Overcoat is constructed from a premium Italian wool blend that offers exceptional warmth without the bulk. The interior is fully lined with silky cupro, ensuring smooth layering over heavy knitwear. The silhouette is deliberately oversized to accommodate modern styling while maintaining clean, architectural lines.',
       specs: {
-        material: '80% Wool, 20% Polyamide; Lining: 100% Cupro',
+        material: '100% Virgin Wool; Lining: 100% Cupro',
         fit: 'Relaxed/Oversized. Size down for a tailored fit.',
         care: 'Dry clean only. Do not tumble dry.',
-        origin: 'Ethically crafted in Portugal'
+        origin: 'Ethically crafted in Italy'
       },
       images: [
         'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?q=80&w=1200&auto=format&fit=crop',
@@ -247,14 +293,24 @@ onMounted(() => {
         { id: 102, title: 'Leather Crossbody Bag', category: 'Accessories', price: 145.00, image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=800&auto=format&fit=crop', rating: 5.0, reviewCount: 8 }
       ]
     }
+    
+    // Set default variant
+    selectedVariant.value = 'Charcoal / M'
+    
     isLoading.value = false
   }, 1000)
 })
 </script>
 
 <style scoped>
-.section-padding {
-  padding-block: var(--space-12);
+.product-details-page {
+  padding-top: var(--space-8);
+}
+
+@media (min-width: 1024px) {
+  .product-details-page {
+    padding-top: var(--space-12);
+  }
 }
 
 .pdp-grid {
@@ -265,99 +321,171 @@ onMounted(() => {
 
 @media (min-width: 1024px) {
   .pdp-grid {
-    grid-template-columns: 1.2fr 1fr;
-    gap: var(--space-16);
-    align-items: start;
+    grid-template-columns: 60% 40%;
+    gap: 0;
   }
 }
 
-.tracking-wider {
-  letter-spacing: 0.05em;
+.pdp-info-col {
+  position: relative;
 }
 
-.leading-relaxed {
-  line-height: 1.7;
-}
-
-.text-danger {
-  color: var(--color-danger);
-}
-
-.pdp-actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
-@media (min-width: 640px) {
-  .pdp-actions {
-    flex-direction: row;
-    align-items: flex-end;
+@media (min-width: 1024px) {
+  .pdp-info-content {
+    position: sticky;
+    top: calc(var(--space-24) + 60px); /* Account for header */
+    padding-left: var(--space-16);
+    padding-right: var(--space-8);
+  }
+  
+  [dir="rtl"] .pdp-info-content {
+    padding-left: var(--space-8);
+    padding-right: var(--space-16);
   }
 }
 
+.border-color {
+  border-color: var(--border-color);
+}
+
+.text-primary { color: var(--text-primary); }
+
+.spec-list li {
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.spec-list li:last-child {
+  border-bottom: none;
+}
+
+/* Custom Buttons & Selectors for Editorial Feel */
 .pdp-quantity {
-  flex-shrink: 0;
+  margin-bottom: var(--space-8);
 }
 
-.pdp-buttons {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+.quantity-selector {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  background-color: transparent;
 }
 
-.wishlist-btn-large {
+.qty-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.25rem;
+  font-weight: 300;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-primary);
-  color: var(--text-secondary);
-  transition: all 0.2s ease;
 }
 
-.wishlist-btn-large:hover, .wishlist-btn-large--active {
+.qty-val {
+  width: 3rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.editorial-btn-primary {
+  display: block;
+  width: 100%;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  padding: var(--space-4) 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  border: 1px solid var(--text-primary);
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.editorial-btn-primary:hover {
+  opacity: 0.8;
+}
+
+.editorial-btn-outline {
+  display: block;
+  background-color: transparent;
+  color: var(--text-primary);
+  padding: var(--space-4) 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  border: 1px solid var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.editorial-btn-outline:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+.wishlist-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.wishlist-btn:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.wishlist-btn--active {
   color: var(--color-danger);
   border-color: var(--color-danger);
 }
 
-.border-y {
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
+.section-padding {
+  padding-block: var(--space-16);
 }
 
-.border-b {
-  border-bottom: 1px solid var(--border-color);
-}
-
-.border-light {
-  border-color: var(--border-light);
-}
-
-.max-w-3xl {
-  max-width: 48rem;
-}
-
-.spec-list {
+.section-header {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-12);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--space-6);
 }
 
-.bg-secondary-section {
-  position: relative;
+.section-header h2 {
+  margin: 0;
+  line-height: 1;
 }
-.bg-secondary-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  width: 100vw;
-  left: 50%;
-  transform: translateX(-50%);
+
+.border-none {
+  border-bottom: none;
+}
+
+.bg-secondary {
   background-color: var(--bg-secondary);
-  z-index: -1;
+}
+
+/* Hidden utility overrides */
+.hidden { display: none !important; }
+@media (min-width: 768px) {
+  .md\:hidden { display: none !important; }
+  .md\:flex { display: flex !important; }
+  .md\:block { display: block !important; }
 }
 </style>
+

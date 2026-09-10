@@ -5,18 +5,20 @@
       <slot />
     </main>
     <StoreFooter />
+    
+    <!-- Cart Drawer integrated at layout level -->
+    <StoreCartDrawer />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, provide } from 'vue'
 
 // In a real multi-tenant app, these would come from tenant configuration (API)
 const currentTheme = ref('light') // 'light' or 'dark'
 const currentDirection = ref('ltr') // 'ltr' or 'rtl'
 
 // Provide a way to test toggling on the design system page
-import { provide } from 'vue'
 provide('themeConfig', {
   currentTheme,
   currentDirection,
