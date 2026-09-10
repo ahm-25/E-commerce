@@ -35,10 +35,10 @@
         </button>
 
         <!-- Cart -->
-        <button class="icon-button" aria-label="Cart">
+        <NuxtLink to="/cart" class="icon-button" aria-label="Cart">
           <UiIcon name="shopping-bag" :size="20" />
           <span class="action-badge">3</span>
-        </button>
+        </NuxtLink>
       </div>
     </div>
   </header>
