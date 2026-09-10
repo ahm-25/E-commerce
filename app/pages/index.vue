@@ -19,8 +19,8 @@
     <section class="container section-padding reveal-on-scroll">
       <StoreFeaturedCollection 
         :loading="isLoading"
-        title="Curated Selection"
-        link-text="Shop Collection"
+        :title="t('home.curatedSelection')"
+        :link-text="t('home.shopCollection')"
         link-url="/products"
         :products="storeData.featuredProducts.slice(0, 3)"
       />
@@ -29,8 +29,8 @@
     <!-- 4. Product Collection (New Arrivals) -->
     <section class="container section-padding reveal-on-scroll">
       <div class="section-header">
-        <h2 class="text-h3 font-medium uppercase tracking-wide">New Arrivals</h2>
-        <NuxtLink v-if="!isLoading" to="/products?sort=newest" class="editorial-link">View All</NuxtLink>
+        <h2 class="text-h3 font-medium uppercase tracking-wide">{{ t('home.newArrivals') }}</h2>
+        <NuxtLinkLocale v-if="!isLoading" to="/products?sort=newest" class="editorial-link">{{ t('common.viewAll') }}</NuxtLinkLocale>
       </div>
       <div class="product-grid">
         <template v-if="isLoading">
@@ -52,7 +52,7 @@
     <!-- 6. Categories (Photographic) -->
     <section class="container section-padding reveal-on-scroll">
       <div class="section-header">
-        <h2 class="text-h3 font-medium uppercase tracking-wide">Collections</h2>
+        <h2 class="text-h3 font-medium uppercase tracking-wide">{{ t('home.collections') }}</h2>
       </div>
       <StoreCategoryGrid :loading="isLoading" :categories="storeData.categories" />
     </section>
@@ -64,7 +64,7 @@
 
     <!-- 8. Best Sellers (Carousel) -->
     <section class="container section-padding reveal-on-scroll">
-      <StoreProductCarousel :loading="isLoading" title="Best Sellers" :products="storeData.bestSellers" />
+      <StoreProductCarousel :loading="isLoading" :title="t('home.bestSellers')" :products="storeData.bestSellers" />
     </section>
 
     <!-- 9. Promotional Section -->
@@ -78,7 +78,7 @@
     <!-- 10. Customer Reviews -->
     <section class="container section-padding py-24 reveal-on-scroll">
       <div class="section-header text-center w-full justify-center border-none mb-12">
-        <h2 class="text-h3 font-medium uppercase tracking-wide mx-auto">Client Testimonials</h2>
+        <h2 class="text-h3 font-medium uppercase tracking-wide mx-auto">{{ t('home.testimonials') }}</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <template v-if="isLoading">
@@ -98,13 +98,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
-import { definePageMeta } from '#imports'
+import { definePageMeta, useI18n } from '#imports'
 import { useScrollReveal } from '~/composables/useScrollReveal'
+import { useLocaleDate } from '~/composables/useLocaleDate'
 
 definePageMeta({
   layout: 'store'
 })
 
+const { t } = useI18n()
+const { formatDate } = useLocaleDate()
 const isLoading = ref(true)
 const { registerElement } = useScrollReveal()
 
@@ -123,57 +126,57 @@ onMounted(() => {
   setTimeout(() => {
     storeData.value = {
       hero: {
-        title: "Elevate Your Everyday Style.",
-        subtitle: "Summer Collection",
-        description: "Discover our latest collection of premium essentials designed for the modern individual.",
-        ctaText: "Shop Collection",
-        backgroundImage: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2000&auto=format&fit=crop"
+        title: t('home.hero.title'),
+        subtitle: t('home.hero.subtitle'),
+        description: t('home.hero.description'),
+        ctaText: t('home.hero.cta'),
+        backgroundImage: "https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=2000&auto=format&fit=crop"
       },
       categories: [
-        { id: 1, name: 'Outerwear', slug: 'outerwear', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=800&auto=format&fit=crop' },
-        { id: 2, name: 'Accessories', slug: 'accessories', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop' },
-        { id: 3, name: 'Footwear', slug: 'footwear', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=800&auto=format&fit=crop' },
-        { id: 4, name: 'Essentials', slug: 'essentials', image: 'https://images.unsplash.com/photo-1434389678211-19703f8f9026?q=80&w=800&auto=format&fit=crop' }
+        { id: 1, name: t('categoryNames.smartphones'), slug: 'smartphones', image: 'https://images.unsplash.com/photo-1598327105666-5b89351cb315?q=80&w=800&auto=format&fit=crop' },
+        { id: 2, name: t('categoryNames.tablets'), slug: 'tablets', image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=800&auto=format&fit=crop' },
+        { id: 3, name: t('categoryNames.wearables'), slug: 'wearables', image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=800&auto=format&fit=crop' },
+        { id: 4, name: t('categoryNames.accessories'), slug: 'accessories', image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=800&auto=format&fit=crop' }
       ],
       featuredProducts: [
-        { id: 501, title: 'Premium Cashmere Blend', category: 'Outerwear', price: 189.00, originalPrice: 220.00, image: 'https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=800&auto=format&fit=crop', badge: 'Featured', badgeVariant: 'primary', rating: 4.9, reviewCount: 62 },
-        { id: 502, title: 'Minimalist Watch', category: 'Accessories', price: 125.00, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop', rating: 4.8, reviewCount: 118 },
-        { id: 503, title: 'Leather Loafers', category: 'Footwear', price: 110.00, originalPrice: 150.00, image: 'https://images.unsplash.com/photo-1614252339460-e1cbfa6816fa?q=80&w=800&auto=format&fit=crop', rating: 4.6, reviewCount: 24 },
-        { id: 504, title: 'Linen Button-Down', category: 'Essentials', price: 55.00, image: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e23?q=80&w=800&auto=format&fit=crop', rating: 4.5, reviewCount: 89 }
+        { id: 501, title: 'ProPhone 15 Ultra', category: 'Smartphones', price: 1199.00, originalPrice: 1299.00, image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=800&auto=format&fit=crop', badge: 'Featured', badgeVariant: 'primary', rating: 4.9, reviewCount: 620, specs: ['256GB', '8GB RAM', '5G', 'OLED'] },
+        { id: 502, title: 'SoundPods Pro 2', category: 'Accessories', price: 249.00, image: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=800&auto=format&fit=crop', rating: 4.8, reviewCount: 1180, specs: ['Active Noise Cancellation', '30h Battery'] },
+        { id: 503, title: 'Watch Series 9', category: 'Wearables', price: 399.00, originalPrice: 450.00, image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=800&auto=format&fit=crop', rating: 4.6, reviewCount: 240, specs: ['45mm', 'ECG', 'LTE'] },
+        { id: 504, title: 'Pad Air 5th Gen', category: 'Tablets', price: 599.00, image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=800&auto=format&fit=crop', rating: 4.5, reviewCount: 890, specs: ['64GB', 'M1 Chip', 'Wi-Fi'] }
       ],
       newArrivals: [
-        { id: 101, title: 'Minimalist Wool Coat', category: 'Outerwear', price: 299.00, originalPrice: 350.00, image: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?q=80&w=800&auto=format&fit=crop', badge: 'New', badgeVariant: 'primary', rating: 4.8, reviewCount: 12 },
-        { id: 102, title: 'Leather Crossbody Bag', category: 'Accessories', price: 145.00, image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=800&auto=format&fit=crop', rating: 5.0, reviewCount: 8 },
-        { id: 103, title: 'Classic White Sneakers', category: 'Footwear', price: 89.00, originalPrice: 110.00, image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=800&auto=format&fit=crop', rating: 4.5, reviewCount: 45 },
-        { id: 104, title: 'Cotton Crewneck Sweater', category: 'Essentials', price: 65.00, image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800&auto=format&fit=crop', rating: 4.2, reviewCount: 6 }
+        { id: 101, title: 'Galaxy Fold 5', category: 'Smartphones', price: 1799.00, originalPrice: 1899.00, image: 'https://images.unsplash.com/photo-1631558231908-013fa0a4eb6a?q=80&w=800&auto=format&fit=crop', badge: 'New', badgeVariant: 'primary', rating: 4.8, reviewCount: 120, specs: ['512GB', '12GB RAM', 'Foldable'] },
+        { id: 102, title: 'MagCharge Power Bank', category: 'Accessories', price: 99.00, image: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?q=80&w=800&auto=format&fit=crop', rating: 5.0, reviewCount: 85, specs: ['10000mAh', '20W Fast Charge'] },
+        { id: 103, title: 'X-Series Laptop Pro', category: 'Computers', price: 1999.00, originalPrice: 2199.00, image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=800&auto=format&fit=crop', rating: 4.5, reviewCount: 45, specs: ['1TB SSD', '16GB RAM', '14" Mini-LED'] },
+        { id: 104, title: 'Smart Home Hub', category: 'Accessories', price: 129.00, image: 'https://images.unsplash.com/photo-1558089687-f282ffcbc126?q=80&w=800&auto=format&fit=crop', rating: 4.2, reviewCount: 65, specs: ['Matter Support', 'Zigbee'] }
       ],
       bestSellers: [
-        { id: 201, title: 'Oxford Button-Down Shirt', category: 'Essentials', price: 55.00, image: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e23?q=80&w=800&auto=format&fit=crop', badge: 'Bestseller', badgeVariant: 'warning', rating: 4.9, reviewCount: 156 },
-        { id: 202, title: 'Slim Fit Chinos', category: 'Trousers', price: 75.00, originalPrice: 90.00, image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=800&auto=format&fit=crop', rating: 4.7, reviewCount: 89 },
-        { id: 203, title: 'Polarized Sunglasses', category: 'Accessories', price: 120.00, image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=800&auto=format&fit=crop', rating: 4.6, reviewCount: 34 },
-        { id: 204, title: 'Canvas Tote Bag', category: 'Accessories', price: 35.00, image: 'https://images.unsplash.com/photo-1597633244018-87cb463c6d2c?q=80&w=800&auto=format&fit=crop', rating: 4.8, reviewCount: 112 },
-        { id: 205, title: 'Linen T-Shirt', category: 'Essentials', price: 40.00, image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop', rating: 4.5, reviewCount: 56 }
+        { id: 201, title: 'ProPhone 14 Plus', category: 'Smartphones', price: 899.00, image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=800&auto=format&fit=crop', badge: 'Bestseller', badgeVariant: 'warning', rating: 4.9, reviewCount: 1560, specs: ['128GB', '6.7" OLED'] },
+        { id: 202, title: 'Wireless Charging Pad', category: 'Accessories', price: 45.00, originalPrice: 60.00, image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=800&auto=format&fit=crop', rating: 4.7, reviewCount: 890, specs: ['15W Qi', 'Dual Device'] },
+        { id: 203, title: 'Noise Cancelling Headphones', category: 'Accessories', price: 349.00, image: 'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?q=80&w=800&auto=format&fit=crop', rating: 4.6, reviewCount: 345, specs: ['Hi-Res Audio', 'Over-ear'] },
+        { id: 204, title: 'Silicone Case (ProPhone 15)', category: 'Accessories', price: 49.00, image: 'https://images.unsplash.com/photo-1605170439002-90845e8c0137?q=80&w=800&auto=format&fit=crop', rating: 4.8, reviewCount: 1120, specs: ['MagSafe Compatible'] },
+        { id: 205, title: 'USB-C Fast Charger', category: 'Accessories', price: 25.00, image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?q=80&w=800&auto=format&fit=crop', rating: 4.5, reviewCount: 560, specs: ['30W', 'GaN'] }
       ],
       promoBanners: [
         {
-          title: "The Summer Edit",
-          subtitle: "Curated for you",
-          description: "Lightweight fabrics and breathable silhouettes designed for the warmest months of the year.",
-          ctaText: "Explore Collection",
-          image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1200&auto=format&fit=crop"
+          title: t('home.promo.title'),
+          subtitle: t('home.promo.subtitle'),
+          description: t('home.promo.description'),
+          ctaText: t('home.promo.cta'),
+          image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?q=80&w=1200&auto=format&fit=crop"
         }
       ],
       reviews: [
-        { name: "Sarah Jenkins", date: "May 12, 2026", title: "Exceptional quality", text: "I've ordered three times from this store and the quality is consistently amazing. The wool coat fits perfectly.", rating: 5 },
-        { name: "Michael Chen", date: "April 28, 2026", title: "Great customer service", text: "Had an issue with sizing and the return process was incredibly smooth. Will definitely be shopping here again.", rating: 5 },
-        { name: "Emma Robertson", date: "April 15, 2026", title: "Beautiful packaging", text: "Opening the package felt like receiving a gift. The attention to detail is what sets this brand apart.", rating: 4 }
+        { name: "Ahmed K.", date: formatDate('2026-05-12'), text: t('home.reviews.one'), rating: 5 },
+        { name: "Sarah M.", date: formatDate('2026-04-28'), text: t('home.reviews.two'), rating: 5 },
+        { name: "Omar N.", date: formatDate('2026-04-15'), text: t('home.reviews.three'), rating: 4 }
       ],
       featuredPiece: {
         id: 999,
-        title: 'The Signature Wool Overcoat',
-        description: 'Meticulously tailored from 100% Italian virgin wool. Features a classic double-breasted silhouette with horn buttons and a cupro lining for an impeccable drape.',
-        price: 495.00,
-        image: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?q=80&w=1200&auto=format&fit=crop'
+        title: t('home.featuredPiece.title'),
+        description: t('home.featuredPiece.description'),
+        price: 1399.00,
+        image: 'https://images.unsplash.com/photo-1598327105666-5b89351cb315?q=80&w=1200&auto=format&fit=crop'
       }
     }
     
@@ -194,25 +197,47 @@ onMounted(() => {
 }
 
 .section-padding {
-  padding-block: var(--space-24);
+  padding-block: 6rem; /* Enhanced vertical rhythm for luxury feel */
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-block: 10rem;
+  }
 }
 
 .section-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   margin-bottom: var(--space-12);
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  position: relative;
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, var(--border-color) 0%, transparent 100%);
+}
+
+.section-header.text-center::after {
+  background: linear-gradient(to right, transparent 0%, var(--border-color) 50%, transparent 100%);
 }
 
 .section-header h2 {
   margin: 0;
   line-height: 1;
+  font-weight: 400; /* Lighter font for elegant editorial look */
+  letter-spacing: 0.1em;
 }
 
-.border-none {
-  border-bottom: none;
+.border-none::after {
+  display: none;
 }
 
 .editorial-link {
@@ -221,14 +246,31 @@ onMounted(() => {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-primary);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.3s ease, opacity 0.3s ease;
-  padding-bottom: 2px;
+  position: relative;
+  padding-bottom: 4px;
+  transition: opacity 0.3s ease;
+}
+
+.editorial-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--text-primary);
+  transform: scaleX(1);
+  transform-origin: bottom left;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .editorial-link:hover {
-  border-color: var(--text-primary);
   opacity: 0.8;
+}
+
+.editorial-link:hover::after {
+  transform: scaleX(0);
+  transform-origin: bottom right;
 }
 
 .py-24 {

@@ -1,10 +1,13 @@
 <template>
   <div class="cart-page section-padding">
     <div class="container">
-      <h1 class="text-h1 mb-8">Shopping Cart</h1>
+      <div class="cart-page-header">
+        <h1 class="text-h1">{{ t('cart.pageTitle') }}</h1>
+        <p class="text-secondary mt-2">{{ t('cart.pageSubtitle') }}</p>
+      </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="cart-layout">
+      <div v-if="isLoading" class="cart-layout mt-10">
         <div class="cart-main">
           <StoreCartItem v-for="i in 3" :key="i" :id="i" title="" image="" :price="0" loading />
         </div>
@@ -14,34 +17,36 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="cartItems.length === 0" class="cart-empty-state">
+      <div v-else-if="cartItems.length === 0" class="cart-empty-state mt-10">
         <StoreEmptyState 
           icon="shopping-bag"
-          title="Your cart is empty"
-          description="Looks like you haven't added anything to your cart yet. Discover our latest arrivals and premium collections."
-          action-text="Continue Shopping"
-          @action-click="navigateTo('/products')"
+          :title="t('cart.emptyTitle')"
+          :description="t('cart.emptyDescription')"
+          :action-text="t('common.continueShopping')"
+          @action-click="navigateTo(localePath('/products'))"
         />
       </div>
 
       <!-- Populated Cart -->
-      <div v-else class="cart-layout">
+      <div v-else class="cart-layout mt-10">
         
         <!-- Items List -->
         <div class="cart-main">
           <div class="cart-items-header hidden md:grid">
-            <span class="text-sm font-medium text-secondary">Product</span>
-            <span class="text-sm font-medium text-secondary text-right">Total</span>
+            <span class="text-xs font-semibold text-secondary uppercase tracking-wider">{{ t('cart.columnProduct') }}</span>
+            <span class="text-xs font-semibold text-secondary text-right uppercase tracking-wider">{{ t('cart.columnTotal') }}</span>
           </div>
           
-          <StoreCartItem 
-            v-for="(item, index) in cartItems" 
-            :key="item.id"
-            v-bind="item"
-            v-model:quantity="item.quantity"
-            @remove="removeItem(index)"
-            @save-for-later="saveForLater(index)"
-          />
+          <div class="cart-items-list">
+            <StoreCartItem 
+              v-for="(item, index) in cartItems" 
+              :key="item.id"
+              v-bind="item"
+              v-model:quantity="item.quantity"
+              @remove="removeItem(index)"
+              @save-for-later="saveForLater(index)"
+            />
+          </div>
         </div>
 
         <!-- Order Summary -->
@@ -53,12 +58,12 @@
             @apply-coupon="handleCoupon"
           >
             <template #actions>
-              <UiButton variant="primary" size="lg" full-width @click="navigateTo('/checkout')">
-                Proceed to Checkout
+              <UiButton variant="primary" size="lg" full-width class="checkout-btn" @click="navigateTo(localePath('/checkout'))">
+                {{ t('cart.proceedToCheckout') }}
               </UiButton>
-              <div class="mt-4 flex items-center justify-center gap-2 text-sm text-secondary">
-                <UiIcon name="check-circle" :size="16" />
-                Secure Checkout Guarantee
+              <div class="mt-4 flex items-center justify-center gap-2 text-xs text-secondary font-medium">
+                <UiIcon name="check-circle" :size="16" class="text-success" />
+                {{ t('cart.secureCheckout') }}
               </div>
             </template>
           </StoreOrderSummary>
@@ -71,12 +76,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { definePageMeta, navigateTo } from '#imports'
+import { definePageMeta, navigateTo, useI18n, useLocalePath } from '#imports'
 
 definePageMeta({
   layout: 'store'
 })
 
+const { t } = useI18n()
+const localePath = useLocalePath()
 const isLoading = ref(true)
 
 // Mock Data
@@ -94,16 +101,16 @@ const removeItem = (index: number) => {
 
 const saveForLater = (index: number) => {
   // Simulate saving for later
-  alert(`Moved "${cartItems.value[index].title}" to saved items.`)
+  alert(t('cart.savedForLater', { title: cartItems.value[index].title }))
   removeItem(index)
 }
 
 const handleCoupon = (code: string) => {
   if (code.toLowerCase() === 'welcome10') {
     discountAmount.value = cartSubtotal.value * 0.1
-    alert('Coupon applied successfully! 10% off.')
+    alert(t('cart.couponApplied'))
   } else {
-    alert('Invalid coupon code.')
+    alert(t('cart.couponInvalid'))
   }
 }
 
@@ -129,8 +136,14 @@ onMounted(() => {
 
 @media (min-width: 1024px) {
   .section-padding {
-    padding-block: var(--space-12);
+    padding-block: var(--space-16);
   }
+}
+
+.cart-page-header {
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
 .cart-layout {
@@ -143,6 +156,7 @@ onMounted(() => {
   .cart-layout {
     flex-direction: row;
     align-items: flex-start;
+    gap: var(--space-12);
   }
 }
 
@@ -153,12 +167,13 @@ onMounted(() => {
 .cart-sidebar {
   width: 100%;
   position: sticky;
-  top: 6rem;
+  top: 8rem;
+  z-index: 10;
 }
 
 @media (min-width: 1024px) {
   .cart-sidebar {
-    width: 380px;
+    width: 400px;
     flex-shrink: 0;
   }
 }
@@ -166,8 +181,13 @@ onMounted(() => {
 .cart-items-header {
   grid-template-columns: 1fr auto;
   padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: var(--space-2);
+}
+
+.cart-items-list {
+  display: flex;
+  flex-direction: column;
 }
 
 .hidden { display: none; }
@@ -177,4 +197,18 @@ onMounted(() => {
 
 .text-right { text-align: right; }
 [dir="rtl"] .text-right { text-align: left; }
+.mt-2 { margin-top: var(--space-2); }
+.mt-10 { margin-top: var(--space-10, 2.5rem); }
+.uppercase { text-transform: uppercase; }
+.tracking-wider { letter-spacing: 0.05em; }
+.font-semibold { font-weight: 600; }
+.text-success { color: var(--color-success); }
+.checkout-btn {
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.checkout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-float);
+}
 </style>

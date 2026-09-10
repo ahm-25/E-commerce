@@ -1,8 +1,8 @@
 <template>
   <section class="brand-statement">
     <div class="container brand-statement__inner">
-      <h2 class="brand-statement__text text-display reveal-on-scroll">{{ text }}</h2>
-      <p v-if="subtext" class="brand-statement__subtext text-body uppercase tracking-widest mt-12 reveal-on-scroll reveal-delay-200">{{ subtext }}</p>
+      <h2 class="brand-statement__text text-display reveal-on-scroll">{{ text || $t('brandStatement.text') }}</h2>
+      <p v-if="subtext !== null" class="brand-statement__subtext text-body uppercase tracking-widest mt-12 reveal-on-scroll reveal-delay-200">{{ subtext || $t('brandStatement.subtext') }}</p>
     </div>
   </section>
 </template>
@@ -14,11 +14,11 @@ import { useScrollReveal } from '~/composables/useScrollReveal'
 defineProps({
   text: {
     type: String,
-    default: 'Redefining\nModern Elegance.'
+    default: ''
   },
   subtext: {
     type: String,
-    default: 'Crafted with intention.'
+    default: ''
   }
 })
 

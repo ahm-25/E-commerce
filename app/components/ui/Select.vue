@@ -4,7 +4,7 @@
       class="ui-select" 
       :value="modelValue"
       @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
-      :aria-label="ariaLabel"
+      :aria-label="ariaLabel || $t('common.selectAnOption')"
     >
       <option v-for="option in options" :key="option.value" :value="option.value">
         {{ option.label }}
@@ -23,7 +23,7 @@ defineProps({
     type: Array as () => Array<{ label: string, value: string | number }>, 
     required: true 
   },
-  ariaLabel: { type: String, default: 'Select an option' }
+  ariaLabel: { type: String, default: '' }
 })
 
 defineEmits(['update:modelValue'])

@@ -15,16 +15,16 @@
       <div v-if="isCartOpen" class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title">
         
         <div class="cart-drawer__header">
-          <h2 id="cart-title" class="text-h3 font-medium uppercase tracking-wide">Your Cart</h2>
-          <button @click="closeCart" class="cart-close-btn" aria-label="Close cart">
+          <h2 id="cart-title" class="text-h3 font-medium uppercase tracking-wide">{{ $t('cart.drawerTitle') }}</h2>
+          <button @click="closeCart" class="cart-close-btn" :aria-label="$t('cart.close')">
             <UiIcon name="x" :size="28" stroke-width="1.5" />
           </button>
         </div>
 
         <div class="cart-drawer__content">
           <div v-if="items.length === 0" class="cart-empty">
-            <p class="text-secondary text-body-lg mb-8">Your cart is currently empty.</p>
-            <button @click="closeCart" class="editorial-btn">Continue Shopping</button>
+            <p class="text-secondary text-body-lg mb-8">{{ $t('cart.empty') }}</p>
+            <button @click="closeCart" class="editorial-btn">{{ $t('common.continueShopping') }}</button>
           </div>
           
           <ul v-else class="cart-items">
@@ -38,7 +38,7 @@
                     <h3 class="text-body font-medium uppercase tracking-widest">{{ item.title }}</h3>
                     <p v-if="item.variant" class="text-sm text-secondary mt-1">{{ item.variant }}</p>
                   </div>
-                  <button @click="removeFromCart(index)" class="cart-item__remove" aria-label="Remove item">
+                  <button @click="removeFromCart(index)" class="cart-item__remove" :aria-label="$t('cart.removeItem')">
                     <UiIcon name="trash-2" :size="18" stroke-width="1.5" />
                   </button>
                 </div>
@@ -49,7 +49,7 @@
                     <span class="quantity-value">{{ item.quantity }}</span>
                     <button @click="updateQuantity(index, item.quantity + 1)" class="quantity-btn">+</button>
                   </div>
-                  <span class="text-body font-medium">${{ (item.price * item.quantity).toFixed(2) }}</span>
+                  <span class="text-body font-medium">{{ formatPrice(item.price * item.quantity) }}</span>
                 </div>
               </div>
             </li>
@@ -58,13 +58,13 @@
 
         <div v-if="items.length > 0" class="cart-drawer__footer">
           <div class="flex justify-between items-center mb-6">
-            <span class="text-body uppercase tracking-widest">Subtotal</span>
-            <span class="text-h4 font-medium">${{ cartTotal.toFixed(2) }}</span>
+            <span class="text-body uppercase tracking-widest">{{ $t('cart.subtotal') }}</span>
+            <span class="text-h4 font-medium">{{ formatPrice(cartTotal) }}</span>
           </div>
-          <p class="text-sm text-secondary mb-6">Shipping & taxes calculated at checkout.</p>
-          <NuxtLink to="/checkout" class="checkout-btn w-full text-center" @click="closeCart">
-            Proceed to Checkout
-          </NuxtLink>
+          <p class="text-sm text-secondary mb-6">{{ $t('cart.shippingNote') }}</p>
+          <NuxtLinkLocale to="/checkout" class="checkout-btn w-full text-center" @click="closeCart">
+            {{ $t('cart.proceedToCheckout') }}
+          </NuxtLinkLocale>
         </div>
       </div>
     </transition>
@@ -73,8 +73,10 @@
 
 <script setup lang="ts">
 import { useCart } from '~/composables/useCart'
+import { usePrice } from '~/composables/usePrice'
 
 const { isCartOpen, closeCart, items, cartTotal, removeFromCart, updateQuantity } = useCart()
+const { formatPrice } = usePrice()
 </script>
 
 <style scoped>

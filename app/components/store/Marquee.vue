@@ -3,7 +3,7 @@
     <div class="marquee-content">
       <!-- We duplicate the text multiple times to ensure smooth infinite scrolling -->
       <span v-for="i in 4" :key="i" class="marquee-text">
-        {{ text }}
+        {{ text || $t('marquee.default') }}
         <span class="marquee-separator">•</span>
       </span>
     </div>
@@ -14,7 +14,7 @@
 defineProps({
   text: {
     type: String,
-    default: 'COMPLIMENTARY WORLDWIDE SHIPPING ON ALL ORDERS'
+    default: ''
   }
 })
 </script>

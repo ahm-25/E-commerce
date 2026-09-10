@@ -10,7 +10,7 @@
           Toggle Theme ({{ currentTheme }})
         </UiButton>
         <UiButton variant="outline" @click="toggleDirection">
-          Toggle RTL ({{ currentDirection }})
+          Toggle Language ({{ currentDirection }})
         </UiButton>
       </div>
     </div>

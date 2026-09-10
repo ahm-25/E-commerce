@@ -1,12 +1,12 @@
 <template>
   <aside class="product-filters">
     <div class="filters-header">
-      <h3 class="text-h3 font-semibold">Filters</h3>
-      <button class="text-sm text-accent underline hover:text-accent-hover" @click="$emit('clear')">Clear All</button>
+      <h3 class="text-h3 font-semibold">{{ $t('plp.filters') }}</h3>
+      <button class="text-sm text-accent underline hover:text-accent-hover" @click="$emit('clear')">{{ $t('plp.clearAll') }}</button>
     </div>
 
     <!-- Categories -->
-    <UiAccordion title="Categories" default-open>
+    <UiAccordion :title="$t('common.categories')" default-open>
       <div class="filter-group">
         <UiCheckbox v-for="cat in categories" :key="cat.value" v-model="selectedFilters.categories[cat.value]">
           {{ cat.label }} <span class="text-muted text-xs ml-1">({{ cat.count }})</span>
@@ -15,35 +15,35 @@
     </UiAccordion>
 
     <!-- Price Range -->
-    <UiAccordion title="Price Range" default-open>
+    <UiAccordion :title="$t('plp.priceRange')" default-open>
       <div class="filter-group">
-        <UiCheckbox v-for="price in priceRanges" :key="price.value" v-model="selectedFilters.price[price.value]">
+        <UiCheckbox v-for="price in resolvedPriceRanges" :key="price.value" v-model="selectedFilters.price[price.value]">
           {{ price.label }}
         </UiCheckbox>
       </div>
     </UiAccordion>
 
     <!-- Availability -->
-    <UiAccordion title="Availability" default-open>
+    <UiAccordion :title="$t('plp.availability')" default-open>
       <div class="filter-group">
         <UiCheckbox v-model="selectedFilters.availability.inStock">
-          In Stock
+          {{ $t('plp.inStock') }}
         </UiCheckbox>
         <UiCheckbox v-model="selectedFilters.availability.outOfStock">
-          Out of Stock
+          {{ $t('plp.outOfStock') }}
         </UiCheckbox>
       </div>
     </UiAccordion>
 
     <!-- Rating -->
-    <UiAccordion title="Rating">
+    <UiAccordion :title="$t('plp.rating')">
       <div class="filter-group">
         <UiCheckbox v-for="rating in 4" :key="rating" v-model="selectedFilters.rating[5 - rating]">
           <div class="flex items-center gap-1">
             <div class="flex">
               <UiIcon v-for="i in 5" :key="i" name="star" :size="14" :color="i <= (5 - rating) ? 'var(--color-warning)' : 'var(--border-color)'" :filled="i <= (5 - rating)" />
             </div>
-            <span>& up</span>
+            <span>{{ $t('plp.andUp') }}</span>
           </div>
         </UiCheckbox>
       </div>
@@ -52,7 +52,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
+import { useI18n } from '#imports'
+
+const { t } = useI18n()
 
 const props = defineProps({
   categories: {
@@ -61,14 +64,21 @@ const props = defineProps({
   },
   priceRanges: {
     type: Array as () => Array<{ label: string, value: string }>,
-    default: () => [
-      { label: 'Under $50', value: 'under-50' },
-      { label: '$50 to $100', value: '50-100' },
-      { label: '$100 to $200', value: '100-200' },
-      { label: 'Over $200', value: 'over-200' }
-    ]
+    default: () => []
   }
 })
+
+// Fall back to the standard bands when the parent does not supply its own.
+const resolvedPriceRanges = computed(() =>
+  props.priceRanges.length
+    ? props.priceRanges
+    : [
+        { label: t('plp.under50'), value: 'under-50' },
+        { label: t('plp.range50to100'), value: '50-100' },
+        { label: t('plp.range100to200'), value: '100-200' },
+        { label: t('plp.over200'), value: 'over-200' }
+      ]
+)
 
 const emit = defineEmits(['update:filters', 'clear'])
 

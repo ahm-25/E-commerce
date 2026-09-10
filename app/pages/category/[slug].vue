@@ -4,9 +4,9 @@
       
       <!-- Breadcrumbs -->
       <nav v-if="!isLoading" class="breadcrumbs mb-6">
-        <NuxtLink to="/" class="breadcrumbs__link">Home</NuxtLink>
+        <NuxtLinkLocale to="/" class="breadcrumbs__link">{{ t('common.home') }}</NuxtLinkLocale>
         <span class="breadcrumbs__separator">/</span>
-        <NuxtLink to="/categories" class="breadcrumbs__link">Collections</NuxtLink>
+        <NuxtLinkLocale to="/categories" class="breadcrumbs__link">{{ t('common.collections') }}</NuxtLinkLocale>
         <span class="breadcrumbs__separator">/</span>
         <span class="breadcrumbs__current">{{ categoryInfo.name }}</span>
       </nav>
@@ -45,18 +45,18 @@
             <div class="flex items-center gap-4">
               <button class="filter-toggle-btn lg:hidden" @click="isMobileFiltersOpen = true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
-                Filters
+                {{ t('plp.filters') }}
               </button>
-              <span v-if="!isLoading" class="text-sm text-secondary font-medium uppercase tracking-widest">{{ filteredProducts.length }} Products</span>
+              <span v-if="!isLoading" class="text-sm text-secondary font-medium uppercase tracking-widest">{{ t('plp.productCount', { count: filteredProducts.length }) }}</span>
               <UiSkeleton v-else type="text" width="80px" />
             </div>
 
             <div class="flex items-center gap-3">
-              <span class="text-sm text-secondary hidden sm:inline-block uppercase tracking-widest">Sort by:</span>
+              <span class="text-sm text-secondary hidden sm:inline-block uppercase tracking-widest">{{ t('plp.sortBy') }}</span>
               <UiSelect 
                 v-model="sortBy" 
                 :options="sortOptions" 
-                aria-label="Sort products"
+                :aria-label="t('plp.sortProducts')"
               />
             </div>
           </div>
@@ -89,8 +89,8 @@
       <div class="mobile-filters-drawer__overlay" @click="isMobileFiltersOpen = false"></div>
       <div class="mobile-filters-drawer__content">
         <div class="flex items-center justify-between p-4 border-b border-light">
-          <h3 class="text-h3 font-semibold uppercase tracking-widest text-sm">Filters</h3>
-          <button @click="isMobileFiltersOpen = false" class="p-2" aria-label="Close filters">
+          <h3 class="text-h3 font-semibold uppercase tracking-widest text-sm">{{ t('plp.filters') }}</h3>
+          <button @click="isMobileFiltersOpen = false" class="p-2" :aria-label="t('plp.closeFilters')">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
@@ -102,8 +102,8 @@
           />
         </div>
         <div class="p-4 border-t border-light flex gap-3 bg-primary sticky bottom-0">
-          <UiButton variant="outline" class="flex-1" @click="clearFilters">Clear All</UiButton>
-          <UiButton variant="primary" class="flex-1" @click="isMobileFiltersOpen = false">Show Results</UiButton>
+          <UiButton variant="outline" class="flex-1" @click="clearFilters">{{ t('plp.clearAll') }}</UiButton>
+          <UiButton variant="primary" class="flex-1" @click="isMobileFiltersOpen = false">{{ t('plp.showResults') }}</UiButton>
         </div>
       </div>
     </div>
@@ -112,12 +112,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue'
-import { definePageMeta, useRoute } from '#imports'
+import { definePageMeta, useRoute, useI18n } from '#imports'
 import { useScrollReveal } from '~/composables/useScrollReveal'
 
 definePageMeta({
   layout: 'store'
 })
+
+const { t } = useI18n()
 
 const route = useRoute()
 const slug = route.params.slug as string
@@ -127,12 +129,12 @@ const isMobileFiltersOpen = ref(false)
 const sortBy = ref('newest')
 const { registerElement } = useScrollReveal()
 
-const sortOptions = [
-  { label: 'Newest Arrivals', value: 'newest' },
-  { label: 'Price: Low to High', value: 'price_asc' },
-  { label: 'Price: High to Low', value: 'price_desc' },
-  { label: 'Best Selling', value: 'best_selling' }
-]
+const sortOptions = computed(() => [
+  { label: t('plp.sort.newest'), value: 'newest' },
+  { label: t('plp.sort.priceAsc'), value: 'price_asc' },
+  { label: t('plp.sort.priceDesc'), value: 'price_desc' },
+  { label: t('plp.sort.bestSelling'), value: 'best_selling' }
+])
 
 const categoryInfo = ref({} as any)
 const allProducts = ref([] as any[])
@@ -168,10 +170,10 @@ const filteredProducts = computed(() => {
 onMounted(() => {
   // Mock fetching data based on the slug
   const titleMap: Record<string, string> = {
-    'outerwear': 'Outerwear',
-    'accessories': 'Accessories',
-    'footwear': 'Footwear',
-    'essentials': 'Essentials'
+    'outerwear': t('categoryNames.outerwear'),
+    'accessories': t('categoryNames.accessories'),
+    'footwear': t('categoryNames.footwear'),
+    'essentials': t('categoryNames.essentials')
   }
   
   const title = titleMap[slug] || (slug.charAt(0).toUpperCase() + slug.slice(1))
@@ -179,7 +181,7 @@ onMounted(() => {
   setTimeout(() => {
     categoryInfo.value = {
       name: title,
-      description: `Explore our meticulously crafted collection of ${title.toLowerCase()}. Designed with uncompromising attention to detail for the modern wardrobe.`
+      description: t('plp.categoryDescription', { category: title.toLowerCase() })
     }
 
     allProducts.value = [

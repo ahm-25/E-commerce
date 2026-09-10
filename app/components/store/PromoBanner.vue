@@ -22,7 +22,7 @@
           <span v-if="subtitle" class="text-xs font-medium uppercase tracking-widest mb-4 block text-secondary">{{ subtitle }}</span>
           <h2 class="text-h2 font-light mb-6">{{ title }}</h2>
           <p class="text-secondary text-body-lg mb-12 max-w-md">{{ description }}</p>
-          <NuxtLink to="/products" class="editorial-btn">{{ ctaText }}</NuxtLink>
+          <NuxtLinkLocale to="/products" class="editorial-btn">{{ ctaText }}</NuxtLinkLocale>
         </div>
       </div>
     </div>

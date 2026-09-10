@@ -4,43 +4,53 @@
       
       <!-- Left: Utilities (Search, Wishlist, Cart) -->
       <div class="store-header__left">
-        <button class="icon-button" aria-label="Search">
+        <button class="icon-button" :aria-label="$t('common.search')">
           <UiIcon name="search" :size="20" stroke-width="1.5" />
         </button>
-        <button class="icon-button" aria-label="Wishlist">
+        <button class="icon-button" :aria-label="$t('common.wishlist')">
           <UiIcon name="heart" :size="20" stroke-width="1.5" />
           <span class="action-badge">1</span>
         </button>
-        <NuxtLink to="/cart" class="icon-button" aria-label="Cart">
+        <NuxtLinkLocale to="/cart" class="icon-button" :aria-label="$t('common.cart')">
           <UiIcon name="shopping-bag" :size="20" stroke-width="1.5" />
           <span class="action-badge">3</span>
-        </NuxtLink>
+        </NuxtLinkLocale>
       </div>
 
       <!-- Center: Brand/Logo -->
-      <NuxtLink to="/" class="store-header__center">
+      <NuxtLinkLocale to="/" class="store-header__center">
         <h1 class="text-h4 font-medium tracking-wide uppercase">{{ storeName }}</h1>
-      </NuxtLink>
+      </NuxtLinkLocale>
 
       <!-- Right: Navigation, Theme, Language, Account -->
       <div class="store-header__right">
         <nav class="store-header__nav">
-          <NuxtLink to="/" class="nav-link">Home</NuxtLink>
-          <NuxtLink to="/products" class="nav-link">Catalog</NuxtLink>
-          <NuxtLink to="/categories" class="nav-link">Categories</NuxtLink>
+          <NuxtLinkLocale to="/" class="nav-link">{{ $t('common.home') }}</NuxtLinkLocale>
+          <NuxtLinkLocale to="/products" class="nav-link">{{ $t('common.catalog') }}</NuxtLinkLocale>
+          <NuxtLinkLocale to="/categories" class="nav-link">{{ $t('common.categories') }}</NuxtLinkLocale>
         </nav>
         
         <div class="header-divider"></div>
 
-        <button class="text-xs uppercase font-medium tracking-widest nav-link">En</button>
+        <NuxtLink
+          :to="switchLocalePath(otherLocale.code)"
+          class="text-xs uppercase font-medium tracking-widest nav-link"
+          :lang="otherLocale.code"
+          :hreflang="otherLocale.code"
+        >{{ otherLocale.name }}</NuxtLink>
 
-        <button v-if="themeConfig" class="icon-button" @click="themeConfig.toggleTheme()" :aria-label="themeConfig.currentTheme.value === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+        <!-- Store Theme Switcher (Demo) -->
+        <button class="text-xs uppercase font-medium tracking-widest nav-link" @click="toggleStoreTheme">
+          {{ storeTheme === 'tech' ? $t('common.techTheme') : $t('common.fashionTheme') }}
+        </button>
+
+        <button v-if="themeConfig" class="icon-button" @click="themeConfig.toggleTheme()" :aria-label="themeConfig.currentTheme.value === 'dark' ? $t('common.switchToLight') : $t('common.switchToDark')">
           <UiIcon :name="themeConfig.currentTheme.value === 'dark' ? 'sun' : 'moon'" :size="18" stroke-width="1.5" />
         </button>
         
-        <button class="icon-button" aria-label="Account">
+        <NuxtLinkLocale to="/login" class="icon-button" :aria-label="$t('common.account')">
           <UiIcon name="user" :size="20" stroke-width="1.5" />
-        </button>
+        </NuxtLinkLocale>
       </div>
       
     </div>
@@ -48,10 +58,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { computed, inject } from 'vue'
+import { useI18n, useSwitchLocalePath } from '#imports'
 
-const storeName = ref('Lumina Boutique') // Mock tenant data
+const { t, locale, locales } = useI18n()
+const switchLocalePath = useSwitchLocalePath()
+
+const storeName = computed(() => t('common.brand'))
+
+// The header shows a single button that flips to the *other* language.
+const otherLocale = computed(() => (locales.value as any[]).find(l => l.code !== locale.value)!)
 const themeConfig = inject('themeConfig', null) as any
+
+const { storeTheme, setStoreTheme } = useStoreTheme()
+
+const toggleStoreTheme = () => {
+  setStoreTheme(storeTheme.value === 'tech' ? 'fashion' : 'tech')
+}
 </script>
 
 <style scoped>

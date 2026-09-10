@@ -3,10 +3,10 @@
     <div class="product-carousel__header">
       <h2 class="text-h2 uppercase tracking-wide">{{ title }}</h2>
       <div class="product-carousel__nav" v-if="!loading && products.length > 0">
-        <button class="carousel-nav-btn" @click="scrollLeft" aria-label="Scroll left">
+        <button class="carousel-nav-btn" @click="scrollLeft" :aria-label="$t('product.scrollLeft')">
           <UiIcon name="chevron-left" :size="24" stroke-width="1.5" />
         </button>
-        <button class="carousel-nav-btn" @click="scrollRight" aria-label="Scroll right">
+        <button class="carousel-nav-btn" @click="scrollRight" :aria-label="$t('product.scrollRight')">
           <UiIcon name="chevron-right" :size="24" stroke-width="1.5" />
         </button>
       </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="checkout-progress">
     <div 
-      v-for="(step, index) in steps" 
+      v-for="(step, index) in resolvedSteps" 
       :key="index"
       class="progress-step"
       :class="{
@@ -14,19 +14,36 @@
         <span v-else>{{ index + 1 }}</span>
       </div>
       <span class="step-label">{{ step }}</span>
-      <div v-if="index < steps.length - 1" class="step-line"></div>
+      <div v-if="index < resolvedSteps.length - 1" class="step-line"></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps({
+import { computed } from 'vue'
+import { useI18n } from '#imports'
+
+const { t } = useI18n()
+
+const props = defineProps({
   steps: {
     type: Array as () => string[],
-    default: () => ['Information', 'Address', 'Shipping', 'Payment', 'Review']
+    default: () => []
   },
   currentStep: { type: Number, default: 1 }
 })
+
+const resolvedSteps = computed(() =>
+  props.steps.length
+    ? props.steps
+    : [
+        t('checkout.steps.information'),
+        t('checkout.steps.address'),
+        t('checkout.steps.shipping'),
+        t('checkout.steps.payment'),
+        t('checkout.steps.review')
+      ]
+)
 </script>
 
 <style scoped>

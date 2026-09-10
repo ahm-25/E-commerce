@@ -11,14 +11,14 @@
       
       <div class="container featured-product__content-wrapper">
         <div class="featured-product__content">
-          <p class="featured-product__label text-xs uppercase tracking-widest font-medium mb-4">Featured Piece</p>
+          <p class="featured-product__label text-xs uppercase tracking-widest font-medium mb-4">{{ $t('product.featuredPiece') }}</p>
           <h2 class="featured-product__title text-h1 font-medium mb-4">{{ product.title }}</h2>
-          <p class="featured-product__description text-body-lg mb-8">{{ product.description || 'Experience uncompromised quality and timeless design.' }}</p>
-          <div class="featured-product__price text-h3 mb-8">${{ product.price.toFixed(2) }}</div>
+          <p class="featured-product__description text-body-lg mb-8">{{ product.description || $t('product.defaultDescription') }}</p>
+          <div class="featured-product__price text-h3 mb-8">{{ formatPrice(product.price) }}</div>
           
-          <NuxtLink :to="`/products/${product.id}`" class="editorial-btn">
-            View Details
-          </NuxtLink>
+          <NuxtLinkLocale :to="`/products/${product.id}`" class="editorial-btn">
+            {{ $t('product.viewDetails') }}
+          </NuxtLinkLocale>
         </div>
       </div>
     </div>
@@ -26,6 +26,10 @@
 </template>
 
 <script setup lang="ts">
+import { usePrice } from '~/composables/usePrice'
+
+const { formatPrice } = usePrice()
+
 defineProps({
   product: {
     type: Object,

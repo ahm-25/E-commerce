@@ -25,7 +25,7 @@
            :class="{'gallery-desktop-item--primary': index === 0, 'gallery-desktop-item--secondary-1': index === 1, 'gallery-desktop-item--secondary-2': index === 2, 'gallery-desktop-item--standard': index > 2}"
            @mousemove="(e) => handleZoom(e, index)"
            @mouseleave="() => resetZoom(index)">
-        <img :src="image" :alt="`${title} image ${index + 1}`" class="gallery-image" :style="zoomStyles[index]">
+        <img :src="image" :alt="$t('product.imageAlt', { title, index: index + 1 })" class="gallery-image" :style="zoomStyles[index]">
       </div>
     </div>
 
@@ -44,9 +44,9 @@
           class="gallery-thumbnail-btn"
           :class="{ 'gallery-thumbnail-btn--active': activeIndex === index }"
           @click="activeIndex = index"
-          :aria-label="`View image ${index + 1}`"
+          :aria-label="$t('product.viewImage', { index: index + 1 })"
         >
-          <img :src="image" :alt="`${title} thumbnail ${index + 1}`" class="gallery-image">
+          <img :src="image" :alt="$t('product.thumbnailAlt', { title, index: index + 1 })" class="gallery-image">
         </button>
       </div>
     </div>

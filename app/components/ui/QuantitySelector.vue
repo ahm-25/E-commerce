@@ -4,7 +4,7 @@
       class="ui-quantity__btn" 
       @click="decrement" 
       :disabled="modelValue <= min" 
-      aria-label="Decrease quantity"
+      :aria-label="$t('common.decreaseQuantity')"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
     </button>
@@ -15,13 +15,13 @@
       @input="onInput" 
       :min="min" 
       :max="max"
-      aria-label="Quantity"
+      :aria-label="$t('common.quantity')"
     >
     <button 
       class="ui-quantity__btn" 
       @click="increment" 
       :disabled="modelValue >= max" 
-      aria-label="Increase quantity"
+      :aria-label="$t('common.increaseQuantity')"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
     </button>

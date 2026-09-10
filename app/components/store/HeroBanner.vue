@@ -19,15 +19,15 @@
     <!-- Content -->
     <div class="hero-content container">
       <div class="hero-text-block" ref="heroText">
-        <span class="hero-subtitle text-xs uppercase tracking-widest">{{ subtitle }}</span>
-        <h1 class="hero-title text-hero">{{ title }}</h1>
-        <NuxtLink v-if="ctaUrl" :to="ctaUrl" class="hero-cta">{{ ctaText }}</NuxtLink>
+        <span class="hero-subtitle text-xs uppercase tracking-widest">{{ subtitle || $t('hero.subtitle') }}</span>
+        <h1 class="hero-title text-hero">{{ title || $t('hero.title') }}</h1>
+        <NuxtLinkLocale v-if="ctaUrl" :to="ctaUrl" class="hero-cta">{{ ctaText || $t('hero.cta') }}</NuxtLinkLocale>
       </div>
     </div>
 
     <!-- Scroll Indicator -->
     <div class="scroll-indicator hidden md:flex">
-      <span class="scroll-text text-xs uppercase tracking-widest">Scroll</span>
+      <span class="scroll-text text-xs uppercase tracking-widest">{{ $t('common.scroll') }}</span>
       <div class="scroll-line"></div>
     </div>
   </div>
@@ -37,9 +37,9 @@
 import { onMounted, ref } from 'vue'
 
 defineProps({
-  title: { type: String, default: 'The Fall Collection' },
-  subtitle: { type: String, default: 'New Arrivals' },
-  ctaText: { type: String, default: 'Explore Now' },
+  title: { type: String, default: '' },
+  subtitle: { type: String, default: '' },
+  ctaText: { type: String, default: '' },
   ctaUrl: { type: String, default: '/products' }
 })
 

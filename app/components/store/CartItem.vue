@@ -1,5 +1,5 @@
 <template>
-  <div class="cart-item">
+  <div class="cart-item group">
     <!-- Loading State -->
     <template v-if="loading">
       <div class="cart-item-image-skeleton">
@@ -28,13 +28,13 @@
         <div class="cart-item-header">
           <div>
             <h3 class="text-h3 text-base font-semibold mb-1">
-              <NuxtLink :to="`/products/${id}`" class="hover:text-accent">{{ title }}</NuxtLink>
+              <NuxtLinkLocale :to="`/products/${id}`" class="item-title">{{ title }}</NuxtLinkLocale>
             </h3>
             <p v-if="variant" class="text-sm text-secondary">{{ variant }}</p>
           </div>
           <div class="cart-item-price text-right">
-            <span class="font-semibold">{{ formattedPrice }}</span>
-            <div v-if="originalPrice" class="text-xs text-muted line-through">{{ formattedOriginalPrice }}</div>
+            <span class="font-semibold text-lg">{{ formattedPrice }}</span>
+            <div v-if="originalPrice" class="text-xs text-muted line-through mt-1">{{ formattedOriginalPrice }}</div>
           </div>
         </div>
         
@@ -43,12 +43,19 @@
             :model-value="quantity" 
             @update:model-value="$emit('update:quantity', $event)" 
             :max="10" 
+            class="quantity-selector"
           />
           
           <div class="cart-item-links">
-            <button class="cart-item-btn text-accent" @click="$emit('save-for-later')">Save for later</button>
-            <span class="text-border mx-2">|</span>
-            <button class="cart-item-btn text-danger" @click="$emit('remove')">Remove</button>
+            <button class="cart-item-btn text-accent" @click="$emit('save-for-later')">
+              <UiIcon name="heart" :size="16" class="btn-icon" />
+              <span>{{ $t('cart.save') }}</span>
+            </button>
+            <span class="text-border mx-3">|</span>
+            <button class="cart-item-btn text-danger" @click="$emit('remove')">
+              <UiIcon name="trash-2" :size="16" class="btn-icon" />
+              <span>{{ $t('cart.remove') }}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -58,6 +65,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { usePrice } from '~/composables/usePrice'
 
 const props = defineProps({
   id: { type: [String, Number], required: true },
@@ -72,7 +80,7 @@ const props = defineProps({
 
 defineEmits(['update:quantity', 'remove', 'save-for-later'])
 
-const formatPrice = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
+const { formatPrice } = usePrice()
 const formattedPrice = computed(() => formatPrice(props.price))
 const formattedOriginalPrice = computed(() => props.originalPrice ? formatPrice(props.originalPrice) : null)
 </script>
@@ -80,24 +88,30 @@ const formattedOriginalPrice = computed(() => props.originalPrice ? formatPrice(
 <style scoped>
 .cart-item {
   display: flex;
-  gap: var(--space-4);
-  padding-block: var(--space-6);
+  gap: var(--space-6);
+  padding-block: var(--space-8);
   border-bottom: 1px solid var(--border-light);
+  transition: background-color 0.3s ease;
+}
+
+.cart-item:hover {
+  background-color: var(--bg-primary);
 }
 
 .cart-item-image-wrapper, .cart-item-image-skeleton {
-  width: 100px;
-  height: 120px;
+  width: 120px;
+  height: 140px;
   flex-shrink: 0;
   border-radius: var(--radius-md);
   background-color: var(--bg-tertiary);
   overflow: hidden;
+  position: relative;
 }
 
 @media (min-width: 640px) {
   .cart-item-image-wrapper, .cart-item-image-skeleton {
-    width: 120px;
-    height: 150px;
+    width: 140px;
+    height: 180px;
   }
 }
 
@@ -105,6 +119,11 @@ const formattedOriginalPrice = computed(() => props.originalPrice ? formatPrice(
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.cart-item:hover .cart-item-image {
+  transform: scale(1.05);
 }
 
 .cart-item-content {
@@ -121,12 +140,18 @@ const formattedOriginalPrice = computed(() => props.originalPrice ? formatPrice(
   gap: var(--space-4);
 }
 
-.hover\:text-accent:hover {
+.item-title {
+  color: var(--text-primary);
+  transition: color 0.2s ease;
+}
+
+.item-title:hover {
   color: var(--accent-color);
 }
 
 .text-right { text-align: right; }
 [dir="rtl"] .text-right { text-align: left; }
+.text-lg { font-size: 1.125rem; }
 
 .cart-item-actions {
   display: flex;
@@ -150,17 +175,26 @@ const formattedOriginalPrice = computed(() => props.originalPrice ? formatPrice(
 }
 
 .cart-item-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
   font-weight: 500;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, transform 0.2s ease;
 }
 
 .cart-item-btn:hover {
   opacity: 0.8;
-  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.btn-icon {
+  margin-bottom: 1px;
 }
 
 .text-danger { color: var(--color-danger); }
-.text-accent { color: var(--accent-color); }
-.text-border { color: var(--border-color); }
-.mx-2 { margin-inline: 0.5rem; }
+.text-accent { color: var(--text-secondary); }
+.text-accent:hover { color: var(--text-primary); }
+.text-border { color: var(--border-light); }
+.mx-3 { margin-inline: 0.75rem; }
+.mt-1 { margin-top: 0.25rem; }
 </style>

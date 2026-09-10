@@ -16,33 +16,40 @@
         {{ badge }}
       </div>
       <div v-else-if="discountPercentage > 0" class="product-card__badge product-card__badge--sale uppercase tracking-widest text-xs">
-        Sale
+        {{ $t('product.sale') }}
       </div>
       
-      <NuxtLink :to="`/products/${id}`" class="block w-full h-full">
+      <NuxtLinkLocale :to="`/products/${id}`" class="block w-full h-full">
         <img :src="image" :alt="title" class="product-card__image" loading="lazy">
         <!-- Optional: secondary image for hover could go here if available -->
-      </NuxtLink>
+      </NuxtLinkLocale>
       
       <!-- Elegant wishlist -->
-      <button class="wishlist-btn" :class="{ 'wishlist-btn--active': isWishlisted }" @click.prevent="toggleWishlist" aria-label="Add to Wishlist">
+      <button class="wishlist-btn" :class="{ 'wishlist-btn--active': isWishlisted }" @click.prevent="toggleWishlist" :aria-label="$t('product.addToWishlist')">
         <UiIcon name="heart" :size="20" stroke-width="1.5" :filled="isWishlisted" />
       </button>
 
       <!-- Quick Add Overlay -->
       <div class="product-card__quick-add">
-        <button class="quick-add-btn text-xs uppercase tracking-widest">Quick Add</button>
+        <button class="quick-add-btn text-xs uppercase tracking-widest">{{ $t('product.quickAdd') }}</button>
       </div>
     </div>
     
     <div class="product-card__info mt-4">
-      <NuxtLink :to="`/products/${id}`" class="block">
+      <NuxtLinkLocale :to="`/products/${id}`" class="block">
         <h3 class="product-card__title text-body font-medium">{{ title }}</h3>
-      </NuxtLink>
+      </NuxtLinkLocale>
       
-      <div class="product-card__price-wrapper mt-1">
-        <span class="product-card__price text-sm text-secondary" :class="{ 'text-danger': discountPercentage > 0 }">{{ formattedPrice }}</span>
-        <span v-if="originalPrice" class="product-card__price--original text-sm text-muted line-through ml-2">{{ formattedOriginalPrice }}</span>
+      <!-- Tech Specs (if provided) -->
+      <div v-if="specs && specs.length" class="product-card__specs mt-2 flex flex-wrap gap-1">
+        <span v-for="(spec, index) in specs" :key="index" class="text-[10px] bg-bg-secondary px-2 py-0.5 rounded-full text-secondary">
+          {{ spec }}
+        </span>
+      </div>
+      
+      <div class="product-card__price-wrapper mt-2">
+        <span class="product-card__price text-sm text-secondary font-semibold" :class="{ 'text-danger': discountPercentage > 0 }">{{ formattedPrice }}</span>
+        <span v-if="originalPrice" class="product-card__price--original text-xs text-muted line-through ml-2">{{ formattedOriginalPrice }}</span>
       </div>
     </div>
   </div>
@@ -50,6 +57,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { usePrice } from '~/composables/usePrice'
 
 const props = defineProps({
   id: { type: [String, Number], required: true },
@@ -63,6 +71,7 @@ const props = defineProps({
   currency: { type: String, default: 'USD' },
   rating: { type: Number, default: 0 },
   reviewCount: { type: Number, default: 0 },
+  specs: { type: Array, default: () => [] },
   loading: { type: Boolean, default: false }
 })
 
@@ -71,9 +80,7 @@ const toggleWishlist = () => {
   isWishlisted.value = !isWishlisted.value
 }
 
-const formatPrice = (value: number) => {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: props.currency }).format(value)
-}
+const { formatPrice } = usePrice()
 
 const formattedPrice = computed(() => formatPrice(props.price))
 const formattedOriginalPrice = computed(() => props.originalPrice ? formatPrice(props.originalPrice) : null)
@@ -94,8 +101,10 @@ const discountPercentage = computed(() => {
 
 .product-card__image-container {
   position: relative;
-  aspect-ratio: 3/4; /* Taller editorial aspect ratio */
-  background-color: var(--bg-tertiary);
+  aspect-ratio: 1/1; /* Square for electronics/hardware */
+  background-color: var(--bg-primary); /* White for better product contrast */
+  border: 1px solid var(--border-light); /* Subtle border for definition */
+  border-radius: var(--radius-md); /* Rounded corners */
   overflow: hidden;
 }
 

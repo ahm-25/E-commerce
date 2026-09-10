@@ -3,7 +3,7 @@
     <div v-for="(group, index) in variantGroups" :key="index" class="variant-group">
       <div class="flex justify-between items-center mb-2">
         <span class="font-medium text-sm">{{ group.name }}</span>
-        <span class="text-sm text-secondary">{{ selectedVariants[group.name]?.label || 'Select' }}</span>
+        <span class="text-sm text-secondary">{{ selectedVariants[group.name]?.label || $t('common.select') }}</span>
       </div>
       
       <!-- Color Swatches -->
@@ -14,7 +14,7 @@
           class="color-swatch-btn"
           :class="{ 'color-swatch-btn--active': selectedVariants[group.name]?.id === option.id }"
           @click="selectVariant(group.name, option)"
-          :aria-label="`Select color ${option.label}`"
+          :aria-label="$t('product.selectColor', { color: option.label })"
         >
           <span 
             class="color-swatch" 

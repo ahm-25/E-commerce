@@ -3,11 +3,11 @@
     <div class="empty-state__icon-wrapper mb-6">
       <UiIcon :name="icon" :size="48" class="empty-state__icon" />
     </div>
-    <h3 class="text-h3 font-semibold mb-2">{{ title }}</h3>
-    <p class="text-secondary text-body mb-8 max-w-md mx-auto">{{ description }}</p>
+    <h3 class="text-h3 font-semibold mb-2">{{ title || $t('emptyState.title') }}</h3>
+    <p class="text-secondary text-body mb-8 max-w-md mx-auto">{{ description || $t('emptyState.description') }}</p>
     <div class="empty-state__actions" v-if="$slots.action || actionText">
       <slot name="action">
-        <UiButton variant="primary" @click="$emit('action-click')">{{ actionText }}</UiButton>
+        <UiButton variant="primary" @click="$emit('action-click')">{{ actionText || $t('emptyState.action') }}</UiButton>
       </slot>
     </div>
   </div>
@@ -16,9 +16,9 @@
 <script setup lang="ts">
 defineProps({
   icon: { type: String, default: 'search' },
-  title: { type: String, default: 'No results found' },
-  description: { type: String, default: 'We couldn\'t find anything matching your current criteria. Try adjusting your filters or search terms.' },
-  actionText: { type: String, default: 'Clear Filters' }
+  title: { type: String, default: '' },
+  description: { type: String, default: '' },
+  actionText: { type: String, default: '' }
 })
 
 defineEmits(['action-click'])

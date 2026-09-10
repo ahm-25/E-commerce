@@ -2,7 +2,7 @@
   <div class="payment-method-ui">
     <div class="bg-secondary rounded-lg p-4 border border-light">
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Card Number</label>
+        <label class="block text-sm font-medium mb-1">{{ $t('payment.cardNumber') }}</label>
         <div class="relative">
           <UiInput 
             v-model="cardData.number" 
@@ -18,14 +18,14 @@
       
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium mb-1">Expiration Date (MM/YY)</label>
+          <label class="block text-sm font-medium mb-1">{{ $t('payment.expiry') }}</label>
           <UiInput v-model="cardData.expiry" placeholder="MM/YY" maxlength="5" />
         </div>
         <div>
-          <label class="block text-sm font-medium mb-1">Security Code (CVV)</label>
+          <label class="block text-sm font-medium mb-1">{{ $t('payment.cvv') }}</label>
           <div class="relative">
             <UiInput v-model="cardData.cvv" placeholder="123" maxlength="4" type="password" />
-            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted cursor-help" title="3 digits on back of card">
+            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted cursor-help" :title="$t('payment.cvvHint')">
               <UiIcon name="info" :size="16" />
             </div>
           </div>
@@ -33,15 +33,15 @@
       </div>
 
       <div class="mt-4">
-        <label class="block text-sm font-medium mb-1">Name on Card</label>
-        <UiInput v-model="cardData.name" placeholder="John Doe" />
+        <label class="block text-sm font-medium mb-1">{{ $t('payment.nameOnCard') }}</label>
+        <UiInput v-model="cardData.name" :placeholder="$t('payment.namePlaceholder')" />
       </div>
     </div>
 
     <!-- Trust indicators -->
     <div class="flex items-center justify-center gap-2 mt-4 text-xs text-secondary">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-      Payments are secure and encrypted.
+      {{ $t('payment.secureNote') }}
     </div>
   </div>
 </template>

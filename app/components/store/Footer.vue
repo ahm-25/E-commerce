@@ -5,7 +5,7 @@
         <div class="footer-col">
           <h3 class="text-h4 font-medium uppercase tracking-widest mb-6">{{ storeName }}</h3>
           <p class="text-secondary text-body mb-8 max-w-xs">
-            Curated premium products for the modern individual. Crafted with intention.
+            {{ $t('footer.tagline') }}
           </p>
           <div class="social-links">
             <a href="#" aria-label="Instagram" class="social-link">Instagram</a>
@@ -15,35 +15,35 @@
         </div>
         
         <div class="footer-col">
-          <h4 class="font-medium uppercase tracking-widest text-xs mb-6 text-muted">Shop</h4>
+          <h4 class="font-medium uppercase tracking-widest text-xs mb-6 text-muted">{{ $t('footer.shop') }}</h4>
           <ul class="footer-nav">
-            <li><NuxtLink to="/products">All Products</NuxtLink></li>
-            <li><NuxtLink to="/categories">Categories</NuxtLink></li>
-            <li><NuxtLink to="/offers">Special Offers</NuxtLink></li>
+            <li><NuxtLinkLocale to="/products">{{ $t('footer.allProducts') }}</NuxtLinkLocale></li>
+            <li><NuxtLinkLocale to="/categories">{{ $t('common.categories') }}</NuxtLinkLocale></li>
+            <li><NuxtLinkLocale to="/offers">{{ $t('footer.specialOffers') }}</NuxtLinkLocale></li>
           </ul>
         </div>
         
         <div class="footer-col">
-          <h4 class="font-medium uppercase tracking-widest text-xs mb-6 text-muted">Support</h4>
+          <h4 class="font-medium uppercase tracking-widest text-xs mb-6 text-muted">{{ $t('footer.support') }}</h4>
           <ul class="footer-nav">
-            <li><NuxtLink to="/contact">Contact Us</NuxtLink></li>
-            <li><NuxtLink to="/faq">FAQ</NuxtLink></li>
-            <li><NuxtLink to="/returns">Returns & Exchanges</NuxtLink></li>
+            <li><NuxtLinkLocale to="/contact">{{ $t('footer.contactUs') }}</NuxtLinkLocale></li>
+            <li><NuxtLinkLocale to="/faq">{{ $t('footer.faq') }}</NuxtLinkLocale></li>
+            <li><NuxtLinkLocale to="/returns">{{ $t('footer.returns') }}</NuxtLinkLocale></li>
           </ul>
         </div>
         
         <div class="footer-col">
-          <h4 class="font-medium uppercase tracking-widest text-xs mb-6 text-muted">Newsletter</h4>
-          <p class="text-secondary text-sm mb-6">Subscribe to receive updates, access to exclusive deals, and more.</p>
+          <h4 class="font-medium uppercase tracking-widest text-xs mb-6 text-muted">{{ $t('footer.newsletter') }}</h4>
+          <p class="text-secondary text-sm mb-6">{{ $t('footer.newsletterText') }}</p>
           <form class="newsletter-form" @submit.prevent>
-            <input type="email" placeholder="Email address" class="newsletter-input" required>
-            <button type="submit" class="newsletter-submit">→</button>
+            <input type="email" :placeholder="$t('footer.emailPlaceholder')" class="newsletter-input" required>
+            <button type="submit" class="newsletter-submit" :aria-label="$t('footer.subscribe')">→</button>
           </form>
         </div>
       </div>
       
       <div class="store-footer__bottom">
-        <p class="text-muted text-xs uppercase tracking-widest">&copy; {{ new Date().getFullYear() }} {{ storeName }}. All rights reserved.</p>
+        <p class="text-muted text-xs uppercase tracking-widest">{{ $t('footer.rights', { year: new Date().getFullYear(), brand: storeName }) }}</p>
         <div class="payment-methods">
           <span class="payment-icon text-xs tracking-wider">VISA</span>
           <span class="payment-icon text-xs tracking-wider">MASTERCARD</span>
@@ -54,9 +54,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
+import { useI18n } from '#imports'
 
-const storeName = ref('Lumina Boutique') // Mock tenant data
+const { t } = useI18n()
+
+const storeName = computed(() => t('common.brand')) // Mock tenant data
 </script>
 
 <style scoped>

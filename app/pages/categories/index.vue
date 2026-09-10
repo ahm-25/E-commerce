@@ -2,8 +2,8 @@
   <div class="categories-page pb-24">
     <!-- Page Header -->
     <header class="page-header container reveal-on-scroll">
-      <h1 class="text-h1 font-light mb-4 text-center">Our Collections</h1>
-      <p class="text-body-lg text-secondary text-center max-w-2xl mx-auto">Explore our meticulously curated categories, designed for the modern individual seeking timeless elegance and uncompromising quality.</p>
+      <h1 class="text-h1 font-light mb-4 text-center">{{ t('categoriesPage.title') }}</h1>
+      <p class="text-body-lg text-secondary text-center max-w-2xl mx-auto">{{ t('categoriesPage.description') }}</p>
     </header>
 
     <!-- Categories Grid -->
@@ -13,10 +13,10 @@
       </div>
       
       <div v-else class="editorial-categories-grid">
-        <NuxtLink 
-          v-for="(category, index) in categories" 
-          :key="category.id" 
-          :to="`/category/${category.slug}`" 
+        <NuxtLinkLocale
+          v-for="(category, index) in categories"
+          :key="category.id"
+          :to="`/category/${category.slug}`"
           class="category-item"
         >
           <div class="category-image-wrapper">
@@ -25,9 +25,9 @@
           </div>
           <div class="category-content">
             <h2 class="text-h2 text-white">{{ category.name }}</h2>
-            <span class="explore-link mt-4">Explore <UiIcon name="arrow-right" :size="16" class="ml-2 inline-block" /></span>
+            <span class="explore-link mt-4">{{ t('categoriesPage.explore') }} <UiIcon name="arrow-right" :size="16" class="ml-2 inline-block" /></span>
           </div>
-        </NuxtLink>
+        </NuxtLinkLocale>
       </div>
     </section>
   </div>
@@ -35,13 +35,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
-import { definePageMeta } from '#imports'
+import { definePageMeta, useI18n } from '#imports'
 import { useScrollReveal } from '~/composables/useScrollReveal'
 
 definePageMeta({
   layout: 'store'
 })
 
+const { t } = useI18n()
 const isLoading = ref(true)
 const { registerElement } = useScrollReveal()
 const categories = ref([] as any[])
@@ -49,10 +50,10 @@ const categories = ref([] as any[])
 onMounted(() => {
   setTimeout(() => {
     categories.value = [
-      { id: 1, name: 'Outerwear', slug: 'outerwear', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=1200&auto=format&fit=crop' },
-      { id: 2, name: 'Accessories', slug: 'accessories', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop' },
-      { id: 3, name: 'Footwear', slug: 'footwear', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=1200&auto=format&fit=crop' },
-      { id: 4, name: 'Essentials', slug: 'essentials', image: 'https://images.unsplash.com/photo-1434389678211-19703f8f9026?q=80&w=1200&auto=format&fit=crop' }
+      { id: 1, name: t('categoryNames.outerwear'), slug: 'outerwear', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=1200&auto=format&fit=crop' },
+      { id: 2, name: t('categoryNames.accessories'), slug: 'accessories', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop' },
+      { id: 3, name: t('categoryNames.footwear'), slug: 'footwear', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=1200&auto=format&fit=crop' },
+      { id: 4, name: t('categoryNames.essentials'), slug: 'essentials', image: 'https://images.unsplash.com/photo-1434389678211-19703f8f9026?q=80&w=1200&auto=format&fit=crop' }
     ]
     isLoading.value = false
 
